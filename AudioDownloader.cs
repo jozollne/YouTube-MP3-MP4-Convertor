@@ -85,7 +85,7 @@ namespace downloader
         {
             Forms.Label label = new Forms.Label
             {
-                Text = $"{audioTitel}",  // Set the label text as "Hi"
+                Text = $"{audioTitel}.mp3",  // Set the label text as "Hi"
                 AutoSize = true,  // Enable auto-sizing of the label based on its content
                 Margin = new Padding(3, 3, 3, 3),  // Set the margin around the label for better spacing
                 Top = historyPanel.Controls.OfType<Forms.Label>().Count() * 25  // Set the vertical position of the label based on the number of existing labels
