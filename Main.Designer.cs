@@ -136,7 +136,7 @@
             // titelLb
             // 
             this.titelLb.AutoSize = true;
-            this.titelLb.Location = new System.Drawing.Point(20, 217);
+            this.titelLb.Location = new System.Drawing.Point(20, 191);
             this.titelLb.Name = "titelLb";
             this.titelLb.Size = new System.Drawing.Size(137, 26);
             this.titelLb.TabIndex = 9;
@@ -208,9 +208,9 @@
             // 
             // thumbnailPicBox
             // 
-            this.thumbnailPicBox.Location = new System.Drawing.Point(321, 269);
+            this.thumbnailPicBox.Location = new System.Drawing.Point(330, 217);
             this.thumbnailPicBox.Name = "thumbnailPicBox";
-            this.thumbnailPicBox.Size = new System.Drawing.Size(359, 293);
+            this.thumbnailPicBox.Size = new System.Drawing.Size(511, 332);
             this.thumbnailPicBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.thumbnailPicBox.TabIndex = 18;
             this.thumbnailPicBox.TabStop = false;
@@ -220,7 +220,7 @@
             this.thumbnailLb.AutoSize = true;
             this.thumbnailLb.BackColor = System.Drawing.Color.Transparent;
             this.thumbnailLb.Font = new System.Drawing.Font("Calibri", 24F, System.Drawing.FontStyle.Bold);
-            this.thumbnailLb.Location = new System.Drawing.Point(314, 181);
+            this.thumbnailLb.Location = new System.Drawing.Point(323, 148);
             this.thumbnailLb.Name = "thumbnailLb";
             this.thumbnailLb.Size = new System.Drawing.Size(135, 39);
             this.thumbnailLb.TabIndex = 19;
@@ -230,7 +230,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Calibri", 24F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(934, 93);
+            this.label2.Location = new System.Drawing.Point(1086, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(121, 39);
             this.label2.TabIndex = 20;
@@ -238,9 +238,9 @@
             // 
             // historyPanel
             // 
-            this.historyPanel.Location = new System.Drawing.Point(710, 148);
+            this.historyPanel.Location = new System.Drawing.Point(872, 53);
             this.historyPanel.Name = "historyPanel";
-            this.historyPanel.Size = new System.Drawing.Size(405, 465);
+            this.historyPanel.Size = new System.Drawing.Size(502, 622);
             this.historyPanel.TabIndex = 21;
             // 
             // label3
@@ -255,7 +255,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(20, 191);
+            this.label4.Location = new System.Drawing.Point(20, 217);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(118, 26);
             this.label4.TabIndex = 23;
@@ -276,7 +276,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(1280, 720);
+            this.ClientSize = new System.Drawing.Size(1386, 688);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
