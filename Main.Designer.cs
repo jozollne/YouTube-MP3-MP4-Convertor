@@ -49,9 +49,9 @@
             this.thumbnailLb = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.historyPanel = new System.Windows.Forms.Panel();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.chanelLb = new System.Windows.Forms.Label();
+            this.idLb = new System.Windows.Forms.Label();
+            this.uploadDateLb = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.thumbnailPicBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -230,7 +230,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Calibri", 24F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(1086, 9);
+            this.label2.Location = new System.Drawing.Point(1071, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(121, 39);
             this.label2.TabIndex = 20;
@@ -243,32 +243,32 @@
             this.historyPanel.Size = new System.Drawing.Size(502, 622);
             this.historyPanel.TabIndex = 21;
             // 
-            // label3
+            // chanelLb
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(20, 243);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(147, 26);
-            this.label3.TabIndex = 22;
-            this.label3.Text = "Kanal: Kein Link";
+            this.chanelLb.AutoSize = true;
+            this.chanelLb.Location = new System.Drawing.Point(20, 243);
+            this.chanelLb.Name = "chanelLb";
+            this.chanelLb.Size = new System.Drawing.Size(147, 26);
+            this.chanelLb.TabIndex = 22;
+            this.chanelLb.Text = "Kanal: Kein Link";
             // 
-            // label4
+            // idLb
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(20, 217);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(118, 26);
-            this.label4.TabIndex = 23;
-            this.label4.Text = "ID: Kein Link";
+            this.idLb.AutoSize = true;
+            this.idLb.Location = new System.Drawing.Point(20, 217);
+            this.idLb.Name = "idLb";
+            this.idLb.Size = new System.Drawing.Size(118, 26);
+            this.idLb.TabIndex = 23;
+            this.idLb.Text = "ID: Kein Link";
             // 
-            // label5
+            // uploadDateLb
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(20, 269);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(211, 26);
-            this.label5.TabIndex = 24;
-            this.label5.Text = "Hochgeladen: Kein Link";
+            this.uploadDateLb.AutoSize = true;
+            this.uploadDateLb.Location = new System.Drawing.Point(20, 269);
+            this.uploadDateLb.Name = "uploadDateLb";
+            this.uploadDateLb.Size = new System.Drawing.Size(211, 26);
+            this.uploadDateLb.TabIndex = 24;
+            this.uploadDateLb.Text = "Hochgeladen: Kein Link";
             // 
             // Main
             // 
@@ -277,9 +277,9 @@
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(1386, 688);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.uploadDateLb);
+            this.Controls.Add(this.idLb);
+            this.Controls.Add(this.chanelLb);
             this.Controls.Add(this.historyPanel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.thumbnailLb);
@@ -333,9 +333,9 @@
         private System.Windows.Forms.Label thumbnailLb;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel historyPanel;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label chanelLb;
+        private System.Windows.Forms.Label idLb;
+        private System.Windows.Forms.Label uploadDateLb;
     }
 }
 

@@ -18,8 +18,11 @@ namespace downloader
         private Label mp3SizeLb;
         private Label mp4QualityLB;
         private PictureBox thumbnailPicBox; // Field to hold the PictureBox control for displaying the thumbnail
+        private Label chanelLb;
+        private Label idLb;
+        private Label uploadDateLb;
 
-        public StatsUpdater(TextBox linkBox, Label titelLb, Label durationLb, Label mp4SizeLb, Label mp3SizeLb, Label mp4QualityLB, PictureBox thumbnailPicBox)
+        public StatsUpdater(TextBox linkBox, Label titelLb, Label durationLb, Label mp4SizeLb, Label mp3SizeLb, Label mp4QualityLB, PictureBox thumbnailPicBox, Label chanelLb, Label idLb, Label uploadDateLb)
         {
             this.linkBox = linkBox;
             this.titelLb = titelLb;
@@ -28,6 +31,9 @@ namespace downloader
             this.mp3SizeLb = mp3SizeLb;
             this.mp4QualityLB = mp4QualityLB;
             this.thumbnailPicBox = thumbnailPicBox;
+            this.chanelLb = chanelLb;
+            this.idLb = idLb;
+            this.uploadDateLb = uploadDateLb;
         }
 
         public async Task UpdateVideoStatsAsync()
@@ -59,7 +65,13 @@ namespace downloader
                         long totalAudioBytes = audioStreamInfo.Size.Bytes;
                         string totalAudioSize = main.FormatBytes(totalAudioBytes);
 
-                        titelLb.Text = "Tietel: \"" + video.Title + "\"";
+                        titelLb.Text = "Titel: \"" + video.Title + "\"";
+                        idLb.Text = $"ID: {video.Id}";
+                        chanelLb.Text = $"Kanal: {video.Author}";
+                        DateTimeOffset uploadDateOffset = video.UploadDate;
+                        DateTime uploadDate = uploadDateOffset.DateTime;
+                        string uploadDateString = uploadDate.ToShortDateString();
+                        uploadDateLb.Text = $"Hochgeladen: {uploadDateString}";
                         durationLb.Text = $"Dauer: {video.Duration}";
                         mp4SizeLb.Text = $".mp4 Größe: {totalVideoSize}";
                         mp3SizeLb.Text = $".mp3 Größe: {totalAudioSize}";
@@ -130,7 +142,10 @@ namespace downloader
             {
                 currentVideoId = null;
                 videoUrl = null;
-                titelLb.Text = "Tietel: Kein Link";
+                titelLb.Text = "Titel: Kein Link";
+                idLb.Text = "ID: Kein Link";
+                chanelLb.Text = "Kanal: Kein Link";
+                uploadDateLb.Text = "Hochgeladen: Kein Link";
                 durationLb.Text = "Dauer: 00:00:00";
                 mp4SizeLb.Text = ".mp4 Größe: 0 MB";
                 mp3SizeLb.Text = ".mp3 Größe: 0 MB";

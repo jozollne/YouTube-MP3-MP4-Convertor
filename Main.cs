@@ -34,7 +34,7 @@ namespace downloader
 
         private async void LinkBox_TextChanged(object sender, EventArgs e)
         {
-            StatsUpdater statsUpdater = new StatsUpdater(linkBox, titelLb, durationLb, mp4SizeLb, mp3SizeLb, mp4QualityLb, thumbnailPicBox);  // Instantiate StatsUpdater to manage YouTube video stats
+            StatsUpdater statsUpdater = new StatsUpdater(linkBox, titelLb, durationLb, mp4SizeLb, mp3SizeLb, mp4QualityLb, thumbnailPicBox, chanelLb, idLb, uploadDateLb);  // Instantiate StatsUpdater to manage YouTube video stats
             await statsUpdater.UpdateVideoStatsAsync();  // Asynchronously update the video stats
         }
         private void cancelDownloadBt_Click(object sender, EventArgs e)
@@ -45,7 +45,7 @@ namespace downloader
         private async void DownloadMp3Bt_Click(object sender, EventArgs e)
         {
             ToggleControls(false);
-            AudioDownloader audioDownloader = new AudioDownloader(linkBox, selectedFolderPath, currentSizeLb, progressBar, historyPanel);  // Instantiate AudioDownloader to download audio from YouTube
+            AudioDownloader audioDownloader = new AudioDownloader(linkBox, selectedFolderPath, currentSizeLb, progressBar, historyPanel, tempFolderPath);  // Instantiate AudioDownloader to download audio from YouTube
             await audioDownloader.DownloadAudioAsync();  // Asynchronously download the audio file
             linkBox.Text = "";
             ToggleControls(true);
@@ -113,6 +113,11 @@ namespace downloader
                     subLb1.Text = "Speicherort: " + selectedFolderPath;  // Update the subLb1 text to the selected folder path
                 }
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
