@@ -1,0 +1,231 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection.Emit;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using YoutubeExplode;
+using YoutubeExplode.Videos.Streams;
+using Forms = System.Windows.Forms;
+using System.Management;
+using YoutubeExplode.Channels;
+using YoutubeExplode.Videos;
+
+namespace downloader
+{
+    public partial class Form1 : Form
+    {
+        private string currentVideoId;
+        private YoutubeClient youtube;
+        static string username = Environment.UserName;
+        static string selectedFolderPath = $@"C:\Users\{username}\Downloads\"; // Default download path
+
+        public Form1()
+        {
+            InitializeComponent();
+
+            youtube = new YoutubeClient();
+            linkBox.TextChanged += LinkBox_TextChanged;
+
+            Timer timer = new Timer();
+            timer.Interval = 1000; // 1 Sekunde
+            timer.Tick += new EventHandler(UpdateUsbLabels);
+            timer.Start();
+
+            subLb1.Text = "Speicherort: " + selectedFolderPath;
+        }
+
+        private async void LinkBox_TextChanged(object sender, EventArgs e)
+        {
+            await UpdateVideoStatsAsync();
+        }
+
+        private async void downloadBt_Click(object sender, EventArgs e)
+        {
+            await DownloadVideoAsync();
+        }
+
+        async Task UpdateVideoStatsAsync()
+        {
+            var videoUrl = linkBox.Text;
+
+            // Extract the video ID from the URL
+            try
+            {
+                var uri = new Uri(videoUrl);
+                var videoId = uri.Query.TrimStart('?').Split('&')[0].Substring(2);
+
+                if (currentVideoId != videoId)
+                {
+                    currentVideoId = videoId;
+
+                    var video = await youtube.Videos.GetAsync(videoId);
+
+                    var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
+
+                    // Get highest quality muxed stream
+                    var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
+
+                    if (streamInfo != null)
+                    {
+                        // Get the content length of the video
+                        long totalBytes = streamInfo.Size.Bytes;
+
+                        // Convert the total size to a human-readable format
+                        string totalSize = FormatBytes(totalBytes);
+
+                        // Update the label with the video title
+                        titelLb.Text = "Titel: \"" + video.Title + "\"";
+
+                        // Update the label with the video duration
+                        durationLb.Text = $"Dauer: {video.Duration}";
+
+                        // Update the label with the total size
+                        totalSizeLb.Text = $"Total Size: {totalSize}";
+
+                        // Update the label with the total size
+                        currentSizeLb.Text = $"Herruntergeladen: 0 MB / Größe des Videos: {totalSize} (0%)";
+                    }
+                }
+            }
+            catch
+            {
+                // Reset the video stats
+                currentVideoId = null;
+                titelLb.Text = "Titel: ";
+                totalSizeLb.Text = "Total Size: ";
+                durationLb.Text = "Dauer: ";
+            }
+        }
+
+
+        async Task DownloadVideoAsync()
+        {
+            var videoUrl = linkBox.Text;
+
+            // Extract the video ID from the URL
+            var uri = new Uri(videoUrl);
+            var videoId = uri.Query.TrimStart('?').Split('&')[0].Substring(2);
+            var video = await youtube.Videos.GetAsync(videoId);
+
+            var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
+
+            // Get highest quality muxed stream
+            var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
+
+            // Check if the streamInfo is null
+            if (streamInfo != null)
+            {
+                // Path where video will be saved
+                var filePath = Path.Combine(selectedFolderPath, $"{video.Title}.mp4");
+
+                // Get the content length of the video
+                long totalBytes = streamInfo.Size.Bytes;
+
+                // Convert the total size to a human-readable format
+                string totalSize = FormatBytes(totalBytes);
+
+                // Update the label with the total size
+                totalSizeLb.Text = $"Total Size: {totalSize}";
+
+                // Create a progress handler
+                IProgress<double> progressHandler = new Progress<double>(p =>
+                {
+                    // Calculate the current downloaded size based on the progress
+                    long currentBytes = (long)(totalBytes * p);
+
+                    // Convert the current size to a human-readable format
+                    string currentSize = FormatBytes(currentBytes);
+
+                    // Update the label with the current size and progress
+                    currentSizeLb.Text = $"Herruntergeladen: {currentSize} / Größe des Videos: {totalSize} ({p:P})";
+
+                    // Update the progress bar
+                    progressBar.Value = (int)(p * 100);
+                });
+
+                // Download and save video with progress
+                await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath, progressHandler);
+            }
+        }
+
+        string FormatBytes(long bytes)
+        {
+            const int scale = 1024;
+            string[] suffixes = { "B", "KB", "MB", "GB", "TB" };
+
+            int suffixIndex = 0;
+            decimal number = bytes;
+
+            while (number >= scale && suffixIndex < suffixes.Length - 1)
+            {
+                number /= scale;
+                suffixIndex++;
+            }
+
+            return $"{number:n2} {suffixes[suffixIndex]}";
+        }
+
+        void UpdateUsbLabels(object sender, EventArgs e)
+        {
+            // Get all removable drives
+            var drives = DriveInfo.GetDrives().Where(d => d.DriveType == DriveType.Removable && d.IsReady);
+
+            // Remove all existing labels
+            foreach (Control control in usbSticksPanel.Controls.OfType<Forms.Label>().ToList())
+            {
+                usbSticksPanel.Controls.Remove(control);
+                control.Dispose();
+            }
+
+            // Add a label for each removable drive
+            foreach (var drive in drives)
+            {
+                AddUsbLabel(drive.Name);
+            }
+        }
+
+        void AddUsbLabel(string driveName)
+        {
+            // Get the volume label of the drive
+            var driveLabel = new DriveInfo(driveName).VolumeLabel;
+
+            Forms.Label label = new Forms.Label
+            {
+                Text = $"{driveLabel} ({driveName})",
+                AutoSize = true,
+                Margin = new Padding(3, 3, 3, 3),  // Add some margin around the label for spacing
+                Top = usbSticksPanel.Controls.OfType<Forms.Label>().Count() * 25
+            };
+
+            // Set click event handler
+            label.Click += (s, e) =>
+            {
+                selectedFolderPath = driveName;
+                subLb1.Text = "Speicherort: " + $"{driveLabel} ({driveName})";
+            };
+
+            usbSticksPanel.Controls.Add(label);
+        }
+
+        private void selectFolderButton_Click_1(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    selectedFolderPath = fbd.SelectedPath;
+                    subLb1.Text = "Speicherort: " + selectedFolderPath;
+                }
+            }
+        }
+
+        private void usbSticksPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+    }
+}
