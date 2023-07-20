@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using System.Windows.Forms;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 using Forms = System.Windows.Forms;  // Alias the System.Windows.Forms namespace to 'Forms' for better readability
+
 
 namespace downloader
 {
@@ -16,15 +18,17 @@ namespace downloader
         private Label currentSizeLb;  // Label for displaying the current download size
         private ProgressBar progressBar;  // ProgressBar for showing the download progress
         private string selectedFolderPath;  // The selected path to save the downloaded file
+        private string tempFolderPath;
         private Panel historyPanel;
 
-        public AudioDownloader(TextBox linkBox, string selectedFolderPath, Label currentSizeLb, ProgressBar progressBar, Panel historyPanel)
+        public AudioDownloader(TextBox linkBox, string selectedFolderPath, Label currentSizeLb, ProgressBar progressBar, Panel historyPanel, string tempFolderPath)
         {
             this.linkBox = linkBox;  // Set the TextBox
             this.selectedFolderPath = selectedFolderPath;  // Set the selected folder path
             this.currentSizeLb = currentSizeLb;  // Set the Label
             this.progressBar = progressBar;  // Set the ProgressBar
             this.historyPanel = historyPanel;
+            this.tempFolderPath = tempFolderPath;
         }
 
         public async Task DownloadAudioAsync()  // Method to download audio asynchronously
@@ -56,19 +60,49 @@ namespace downloader
                         audioTitle = audioTitle.Replace(c, '_'); // Replace evry invalid symbol like "\" with an "_"
                     }
 
-                    var audioFilePath = Path.Combine(selectedFolderPath, $"{audioTitle}.mp3");  // Combine the selected folder path and the audio title to form the audio file path
+                    var tempAudioFilePath = Path.Combine(tempFolderPath, $"{audioTitle}-temp.mp3");  // Combine the selected folder path and the audio title to form the audio file path
+                    var finalAudioFilePath = Path.Combine(selectedFolderPath, $"{audioTitle}.mp3");  // Combine the selected folder path and the audio title to form the audio file path
 
-                    if (File.Exists(audioFilePath))  // Check if the audio file already exists
+                    if (File.Exists(finalAudioFilePath))  // Check if the audio file already exists
                     {
-                        File.Delete(audioFilePath);  // If the audio file already exists, delete it
+                        File.Delete(finalAudioFilePath);  // If the audio file already exists, delete it
                     }
 
                     var audioProgress = new Progress<double>(p => UpdateProgress(p, audioSize, audioBytes));  // Create a progress object for the audio
 
-                    await main.youtube.Videos.Streams.DownloadAsync(audioStreamInfo, audioFilePath, progress: audioProgress);  // Download the audio stream asynchronously and update the progress
+                    await main.youtube.Videos.Streams.DownloadAsync(audioStreamInfo, tempAudioFilePath, progress: audioProgress);  // Download the audio stream asynchronously and update the progress
 
-                    UpdateProgress(1, audioSize, audioBytes);  // Update the progress to 100%
+
+                    var process = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = "ffmpeg.exe",
+                            Arguments = $"-i \"{tempAudioFilePath}\" -vn -ar 44100 -ac 2 -b:a 192k \"{finalAudioFilePath}\"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        }
+                    };
+
+                    process.Start();
+                    process.WaitForExit();
+
+                    File.Delete(tempAudioFilePath);
+
+                    // Das File-Objekt erstellen
+                    TagLib.File tagFile = TagLib.File.Create(finalAudioFilePath);
+
+                    // Metadaten setzen
+                    tagFile.Tag.Title = audio.Title;
+                    tagFile.Tag.Album = audio.Author.ToString();
+                    tagFile.Tag.Year = (uint)audio.UploadDate.Year;
+
+                    // Änderungen speichern
+                    tagFile.Save();
+
                     progressBar.Value = 100;  // Set the progress bar value to 100%
+                    
                 }
                 else  // If the audio stream info is null
                 {
