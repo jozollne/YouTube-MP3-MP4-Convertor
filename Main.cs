@@ -1,5 +1,7 @@
 ﻿using System;  // Import the System namespace
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;  // Import the System.Windows.Forms namespace for creating Windows user interface
@@ -17,6 +19,7 @@ namespace downloader
         public static string username = Environment.UserName;  // Get the username of the current user
         public string selectedFolderPath = $@"C:\Users\{username}\Downloads\"; // Set the default download location to the current user's Downloads folder
         private string tempFolderPath = $@"C:\Users\{username}\AppData\Local\Temp";
+        public InfoForm infoForm = new InfoForm();  // Definieren Sie das infoForm außerhalb der Methode.
 
 
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer()
@@ -28,13 +31,15 @@ namespace downloader
         {
             InitializeComponent();  // Initialize the components of the Form
 
-            button1.FlatAppearance.BorderSize = 0;
-            button1.BackColor = Color.Transparent;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.FlatAppearance.MouseDownBackColor = Color.Transparent;
-            button1.FlatAppearance.MouseOverBackColor = Color.Transparent;
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.UseVisualStyleBackColor = false;  // Stellen Sie sicher, dass der Button immer transparent ist
+            historyBox.ScrollBars = ScrollBars.Both;
+
+            showInfoFormBt.FlatAppearance.BorderSize = 0;
+            showInfoFormBt.BackColor = Color.Transparent;
+            showInfoFormBt.FlatAppearance.BorderSize = 0;
+            showInfoFormBt.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            showInfoFormBt.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            showInfoFormBt.FlatStyle = FlatStyle.Flat;
+            showInfoFormBt.UseVisualStyleBackColor = false;  // Stellen Sie sicher, dass der Button immer transparent ist
 
             linkBox.TextChanged += LinkBox_TextChanged;  // Register the text changed event handler for the linkBox control
 
@@ -58,16 +63,17 @@ namespace downloader
         private async void DownloadMp3Bt_Click(object sender, EventArgs e)
         {
             ToggleControls(false);
-            AudioDownloader audioDownloader = new AudioDownloader(linkBox, selectedFolderPath, currentSizeLb, progressBar, historyBox, tempFolderPath);  // Instantiate AudioDownloader to download audio from YouTube
+            AudioDownloader audioDownloader = new AudioDownloader(this, linkBox, selectedFolderPath, currentSizeLb, progressBar, historyBox, tempFolderPath);  // Instantiate AudioDownloader to download audio from YouTube
             await audioDownloader.DownloadAudioAsync();  // Asynchronously download the audio file
             linkBox.Text = "";
             ToggleControls(true);
         }
 
+
         private async void DownloadMp4Bt_Click(object sender, EventArgs e)
         {
             ToggleControls(false);
-            VideoDownloader VideoDownloader = new VideoDownloader(linkBox, currentSizeLb, progressBar, selectedFolderPath, tempFolderPath, historyBox);  // Instantiate VideoDownloader to download video from YouTube
+            VideoDownloader VideoDownloader = new VideoDownloader(this, linkBox, currentSizeLb, progressBar, selectedFolderPath, tempFolderPath, historyBox);  // Instantiate VideoDownloader to download video from YouTube
             await VideoDownloader.DownloadVideoAsync(/*cts.Token*/);  // Asynchronously download the video file
             linkBox.Text = "";
             ToggleControls(true);
@@ -128,14 +134,60 @@ namespace downloader
             }
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        public void GetMp3FormatAndConvert(string tempAudioFilePath, string finalAudioFilePath)
         {
-            InfoForm infoForm = new InfoForm();
+            using (FileStream fs = new FileStream(tempAudioFilePath, FileMode.Open, FileAccess.Read))
+            {
+                byte[] bytes = new byte[12];
+                fs.Read(bytes, 0, 12);
+                string hex = BitConverter.ToString(bytes).Replace("-", "").ToUpper();
+                string format;
+
+                if (hex.StartsWith("494433") || hex.StartsWith("FFFB"))
+                    format = ".mp3";
+                else if (hex.StartsWith("52494646"))
+                    format = ".wav";
+                else if (hex.StartsWith("4F676753"))
+                    format = ".ogg";
+                else if (hex.StartsWith("664C6143"))
+                    format = ".flac";
+                else if (hex.StartsWith("0000001C667479704D3441"))
+                    format = ".m4a";
+                else if (hex.StartsWith("1A45DFA3"))
+                    format = ".webm";
+                else
+                    format = "Dateiformat konnte nicht erkannt werden";
+
+                infoForm.infoBox.AppendText("Das Format des Audiostrerams ist: " + format + Environment.NewLine);
+
+
+                if (format != ".mp3")
+                {
+                    infoForm.infoBox.AppendText("Das Format des Audiostrems wird von: " + format + " in: .mp3 umgewandelt" + Environment.NewLine);
+                    var process = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = "ffmpeg.exe",
+                            Arguments = $"-i \"{tempAudioFilePath}\" -vn -ar 44100 -ac 2 -b:a 192k \"{finalAudioFilePath}\"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        }
+                    };
+                    process.Start();
+                    process.WaitForExit();
+                    infoForm.infoBox.AppendText("Das Format wurde von: " + format + " in: .mp3 umgewandelt" + Environment.NewLine);
+                }
+            }
+        }
+
+        private void showInfoFormBt_Click(object sender, EventArgs e)
+        {
             infoForm.Show();
         }
     }
 }
 
-//60gb Video ffmpeg wurde nicht beenet und läuft nach 100% im Taskamanager weiter
-//status meldung label mit fehlern und erflogreichen download nachrichten
 //quallität anpassbar machen
+//Schauenn welche Convertierung des Audiostreams schneller ist. Die vom VideoDownloader.cs oder AudioDownloader.cs

@@ -50,9 +50,9 @@
             this.chanelLb = new System.Windows.Forms.Label();
             this.idLb = new System.Windows.Forms.Label();
             this.uploadDateLb = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.thumbnailPicBox = new System.Windows.Forms.PictureBox();
             this.historyBox = new System.Windows.Forms.TextBox();
+            this.showInfoFormBt = new System.Windows.Forms.Button();
+            this.thumbnailPicBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.thumbnailPicBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -255,16 +255,25 @@
             this.uploadDateLb.TabIndex = 24;
             this.uploadDateLb.Text = "Hochgeladen: Kein Link";
             // 
-            // button1
+            // historyBox
             // 
-            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.button1.Image = global::Youtube_Videos_Herrunterladen.Properties.Resources.icons8_info_50;
-            this.button1.Location = new System.Drawing.Point(571, 116);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(32, 32);
-            this.button1.TabIndex = 25;
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            this.historyBox.Location = new System.Drawing.Point(872, 49);
+            this.historyBox.Multiline = true;
+            this.historyBox.Name = "historyBox";
+            this.historyBox.ReadOnly = true;
+            this.historyBox.Size = new System.Drawing.Size(502, 627);
+            this.historyBox.TabIndex = 26;
+            // 
+            // showInfoFormBt
+            // 
+            this.showInfoFormBt.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.showInfoFormBt.Image = ((System.Drawing.Image)(resources.GetObject("showInfoFormBt.Image")));
+            this.showInfoFormBt.Location = new System.Drawing.Point(834, 117);
+            this.showInfoFormBt.Name = "showInfoFormBt";
+            this.showInfoFormBt.Size = new System.Drawing.Size(31, 31);
+            this.showInfoFormBt.TabIndex = 25;
+            this.showInfoFormBt.UseVisualStyleBackColor = true;
+            this.showInfoFormBt.Click += new System.EventHandler(this.showInfoFormBt_Click);
             // 
             // thumbnailPicBox
             // 
@@ -275,15 +284,6 @@
             this.thumbnailPicBox.TabIndex = 18;
             this.thumbnailPicBox.TabStop = false;
             // 
-            // historyBox
-            // 
-            this.historyBox.Location = new System.Drawing.Point(872, 49);
-            this.historyBox.Multiline = true;
-            this.historyBox.Name = "historyBox";
-            this.historyBox.ReadOnly = true;
-            this.historyBox.Size = new System.Drawing.Size(502, 627);
-            this.historyBox.TabIndex = 26;
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 26F);
@@ -292,7 +292,7 @@
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(1386, 688);
             this.Controls.Add(this.historyBox);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.showInfoFormBt);
             this.Controls.Add(this.uploadDateLb);
             this.Controls.Add(this.idLb);
             this.Controls.Add(this.chanelLb);
@@ -350,7 +350,7 @@
         private System.Windows.Forms.Label chanelLb;
         private System.Windows.Forms.Label idLb;
         private System.Windows.Forms.Label uploadDateLb;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button showInfoFormBt;
         private System.Windows.Forms.TextBox historyBox;
     }
 }

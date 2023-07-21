@@ -61,11 +61,21 @@ namespace Youtube_Videos_Herrunterladen.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Icon ähnlich wie (Symbol).
+        /// </summary>
+        internal static System.Drawing.Icon ico_info {
+            get {
+                object obj = ResourceManager.GetObject("ico_info", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap icons8_info_50 {
+        internal static System.Drawing.Bitmap png_info {
             get {
-                object obj = ResourceManager.GetObject("icons8_info_50", resourceCulture);
+                object obj = ResourceManager.GetObject("png_info", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

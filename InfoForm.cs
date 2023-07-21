@@ -12,19 +12,22 @@ namespace Youtube_Videos_Herrunterladen
 {
     public partial class InfoForm : Form
     {
-        int i = 0;
-        
         public InfoForm()
         {
             InitializeComponent();
+            infoBox.ScrollBars = ScrollBars.Vertical;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            i++;
-            infoBox.AppendText(i + Environment.NewLine);
-            infoBox.ScrollToCaret();
-            infoBox.ScrollBars = ScrollBars.Vertical;  // Vertikale Scrollbar aktivieren
+            base.OnFormClosing(e);
+
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;  // Cancel the form closing event
+                Hide();  // Hide the form instead of closing it
+            }
         }
+
     }
 }

@@ -28,38 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InfoForm));
             this.infoBox = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // infoBox
             // 
-            this.infoBox.Location = new System.Drawing.Point(165, 91);
+            this.infoBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.infoBox.Location = new System.Drawing.Point(0, 0);
+            this.infoBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.infoBox.Multiline = true;
             this.infoBox.Name = "infoBox";
             this.infoBox.ReadOnly = true;
-            this.infoBox.Size = new System.Drawing.Size(451, 240);
+            this.infoBox.Size = new System.Drawing.Size(672, 351);
             this.infoBox.TabIndex = 0;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(386, 381);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // InfoForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 26F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.button1);
+            this.ClientSize = new System.Drawing.Size(672, 351);
             this.Controls.Add(this.infoBox);
+            this.Font = new System.Drawing.Font("Calibri", 15.75F);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "InfoForm";
-            this.Text = "InfoForm";
+            this.Text = "Status";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -67,7 +61,6 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox infoBox;
-        private System.Windows.Forms.Button button1;
+        public System.Windows.Forms.TextBox infoBox;
     }
 }
