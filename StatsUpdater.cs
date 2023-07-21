@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Drawing; // Imports the System.Drawing namespace for working with images
+using System.Drawing;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,32 +12,34 @@ namespace downloader
     {
         Main main = new Main();
         private TextBox linkBox;
-        private Label titelLb;
+        private Label titleLb;
         private Label durationLb;
         private Label mp4SizeLb;
         private Label mp3SizeLb;
         private Label mp4QualityLB;
-        private PictureBox thumbnailPicBox; // Field to hold the PictureBox control for displaying the thumbnail
-        private Label chanelLb;
+        private PictureBox thumbnailPicBox; 
+        private Label channelLb;
         private Label idLb;
         private Label uploadDateLb;
 
-        public StatsUpdater(TextBox linkBox, Label titelLb, Label durationLb, Label mp4SizeLb, Label mp3SizeLb, Label mp4QualityLB, PictureBox thumbnailPicBox, Label chanelLb, Label idLb, Label uploadDateLb)
+        public StatsUpdater(TextBox linkBox, Label titleLb, Label durationLb, Label mp4SizeLb, Label mp3SizeLb, Label mp4QualityLB, PictureBox thumbnailPicBox, Label channelLb, Label idLb, Label uploadDateLb)
         {
             this.linkBox = linkBox;
-            this.titelLb = titelLb;
+            this.titleLb = titleLb;
             this.durationLb = durationLb;
             this.mp4SizeLb = mp4SizeLb;
             this.mp3SizeLb = mp3SizeLb;
             this.mp4QualityLB = mp4QualityLB;
             this.thumbnailPicBox = thumbnailPicBox;
-            this.chanelLb = chanelLb;
+            this.channelLb = channelLb;
             this.idLb = idLb;
             this.uploadDateLb = uploadDateLb;
         }
 
+        // Asynchronous method to update the video statistics
         public async Task UpdateVideoStatsAsync()
         {
+            // Initialization of a variable to store the current video ID
             string currentVideoId = "";
             var videoUrl = linkBox.Text;
 
@@ -50,34 +52,37 @@ namespace downloader
                 {
                     currentVideoId = videoId;
 
+                    // Getting video information using the YoutubeExplode library
                     var video = await main.youtube.Videos.GetAsync(videoId);
 
+                    // Getting stream information for video and audio
                     var streamManifest = await main.youtube.Videos.Streams.GetManifestAsync(videoId);
-
                     var videoStreamInfo = streamManifest.GetVideoOnlyStreams().GetWithHighestVideoQuality();
                     var audioStreamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
 
                     if (videoStreamInfo != null && audioStreamInfo != null)
                     {
+                        // Calculating the size of video and audio streams in bytes and converting to a readable format
                         long totalVideoBytes = videoStreamInfo.Size.Bytes;
                         string totalVideoSize = main.FormatBytes(totalVideoBytes);
 
                         long totalAudioBytes = audioStreamInfo.Size.Bytes;
                         string totalAudioSize = main.FormatBytes(totalAudioBytes);
 
-                        titelLb.Text = "Titel: \"" + video.Title + "\"";
+                        // Updating the corresponding Labels in the main window with the video information
+                        titleLb.Text = "Title: \"" + video.Title + "\"";
                         idLb.Text = $"ID: {video.Id}";
-                        chanelLb.Text = $"Kanal: {video.Author}";
+                        channelLb.Text = $"Channel: {video.Author}";
                         DateTimeOffset uploadDateOffset = video.UploadDate;
                         DateTime uploadDate = uploadDateOffset.DateTime;
                         string uploadDateString = uploadDate.ToShortDateString();
-                        uploadDateLb.Text = $"Hochgeladen: {uploadDateString}";
-                        durationLb.Text = $"Dauer: {video.Duration}";
-                        mp4SizeLb.Text = $".mp4 Größe: {totalVideoSize}";
-                        mp3SizeLb.Text = $".mp3 Größe: {totalAudioSize}";
+                        uploadDateLb.Text = $"Uploaded: {uploadDateString}";
+                        durationLb.Text = $"Duration: {video.Duration}";
+                        mp4SizeLb.Text = $".mp4 Size: {totalVideoSize}";
+                        mp3SizeLb.Text = $".mp3 Size: {totalAudioSize}";
 
+                        // Display the video quality in the right format
                         string qualityLabel = Convert.ToString(videoStreamInfo.VideoQuality);
-
                         string qualityDescriptor = "";
                         if (qualityLabel.Contains("4320"))
                         {
@@ -96,12 +101,11 @@ namespace downloader
                             qualityDescriptor = "SD";
                         }
 
-                        mp4QualityLB.Text = $".mp4 Qualität: {qualityLabel} ({qualityDescriptor})";
+                        mp4QualityLB.Text = $".mp4 Quality: {qualityLabel} ({qualityDescriptor})";
 
-
+                        // Get the thumbnail
                         try
                         {
-                            // Get the thumbnail
                             var thumbnail = video.Thumbnails.OrderByDescending(t => t.Resolution.Width * t.Resolution.Height).FirstOrDefault();  // Get the highest resolution thumbnail
 
                             if (thumbnail != null)
@@ -130,7 +134,7 @@ namespace downloader
                                     }
                                 }
                             }
-                        } 
+                        }
                         catch
                         {
                             PictureError();
@@ -140,24 +144,25 @@ namespace downloader
             }
             catch
             {
+                // Clear evrythig when the link is empty
                 currentVideoId = null;
                 videoUrl = null;
-                titelLb.Text = "Titel: Kein Link";
-                idLb.Text = "ID: Kein Link";
-                chanelLb.Text = "Kanal: Kein Link";
-                uploadDateLb.Text = "Hochgeladen: Kein Link";
-                durationLb.Text = "Dauer: 00:00:00";
-                mp4SizeLb.Text = ".mp4 Größe: 0 MB";
-                mp3SizeLb.Text = ".mp3 Größe: 0 MB";
-                mp4QualityLB.Text = ".mp4 Qualität: Kein Link";
-                thumbnailPicBox.Image = null; // Clear the PictureBox image if an error occurs
+                titleLb.Text = "Title: No link";
+                idLb.Text = "ID: No link";
+                channelLb.Text = "Channel: No link";
+                uploadDateLb.Text = "Uploaded: No link";
+                durationLb.Text = "Duration: 00:00:00";
+                mp4SizeLb.Text = ".mp4 Size: 0 MB";
+                mp3SizeLb.Text = ".mp3 Size: 0 MB";
+                mp4QualityLB.Text = ".mp4 Quality: No link";
+                thumbnailPicBox.Image = null; 
             }
 
         }
 
         void PictureError()
         {
-            string errorLoadingPicture = "Das Bild konnte nicht geladen werden!"; // Declare a variable or a string
+            string errorLoadingPicture = "The image could not be loaded!"; // Declare a variable or a string
 
             Bitmap picture = new Bitmap(thumbnailPicBox.Width, thumbnailPicBox.Height); // Create a Bitmap image object
 

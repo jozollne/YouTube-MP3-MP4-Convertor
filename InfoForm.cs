@@ -15,7 +15,7 @@ namespace Youtube_Videos_Herrunterladen
         public InfoForm()
         {
             InitializeComponent();
-            infoBox.ScrollBars = ScrollBars.Vertical;
+            infoBox.ScrollBars = ScrollBars.Vertical; // Add a vertical scrollbar
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
