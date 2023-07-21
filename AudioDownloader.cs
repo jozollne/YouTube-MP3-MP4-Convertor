@@ -19,15 +19,15 @@ namespace downloader
         private ProgressBar progressBar;  // ProgressBar for showing the download progress
         private string selectedFolderPath;  // The selected path to save the downloaded file
         private string tempFolderPath;
-        private Panel historyPanel;
+        private TextBox historyBox;
 
-        public AudioDownloader(TextBox linkBox, string selectedFolderPath, Label currentSizeLb, ProgressBar progressBar, Panel historyPanel, string tempFolderPath)
+        public AudioDownloader(TextBox linkBox, string selectedFolderPath, Label currentSizeLb, ProgressBar progressBar, TextBox historyBox, string tempFolderPath)
         {
             this.linkBox = linkBox;  // Set the TextBox
             this.selectedFolderPath = selectedFolderPath;  // Set the selected folder path
             this.currentSizeLb = currentSizeLb;  // Set the Label
             this.progressBar = progressBar;  // Set the ProgressBar
-            this.historyPanel = historyPanel;
+            this.historyBox = historyBox;
             this.tempFolderPath = tempFolderPath;
         }
 
@@ -53,7 +53,7 @@ namespace downloader
 
                     string audioTitle = audio.Title;  // save video title
 
-                    UpdateHistory(audio.Title);
+                    historyBox.Text += audio.Title + ".mp3" + Environment.NewLine;
 
                     foreach (char c in Path.GetInvalidFileNameChars()) // Read an save evry char in "c"
                     {
@@ -113,19 +113,6 @@ namespace downloader
             {
                 MessageBox.Show($"Ein Fehler ist aufgetreten: {ex.Message}", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);  // Show the error message
             }
-        }
-
-        private void UpdateHistory(string audioTitel)
-        {
-            Forms.Label label = new Forms.Label
-            {
-                Text = $"{audioTitel}.mp3",  // Set the label text as "Hi"
-                AutoSize = true,  // Enable auto-sizing of the label based on its content
-                Margin = new Padding(3, 3, 3, 3),  // Set the margin around the label for better spacing
-                Top = historyPanel.Controls.OfType<Forms.Label>().Count() * 25  // Set the vertical position of the label based on the number of existing labels
-            };
-
-            historyPanel.Controls.Add(label);  // Add the label to the panel's controls
         }
 
         private void UpdateProgress(double progress, string audioSize, long audioBytes)  // Method to update the progress

@@ -1,7 +1,11 @@
 ﻿using System;  // Import the System namespace
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;  // Import the System.Windows.Forms namespace for creating Windows user interface
+using TagLib;
+using Youtube_Videos_Herrunterladen;
+using Youtube_Videos_Herrunterladen.Properties;
 using YoutubeExplode;  // Import the YoutubeExplode library for interacting with YouTube
 
 namespace downloader
@@ -11,8 +15,9 @@ namespace downloader
         public YoutubeClient youtube = new YoutubeClient();  // Create a new YoutubeClient to interact with the YouTube service
         //CancellationTokenSource cts = new CancellationTokenSource();
         public static string username = Environment.UserName;  // Get the username of the current user
-        public static string selectedFolderPath = $@"C:\Users\{username}\Downloads\"; // Set the default download location to the current user's Downloads folder
+        public string selectedFolderPath = $@"C:\Users\{username}\Downloads\"; // Set the default download location to the current user's Downloads folder
         private string tempFolderPath = $@"C:\Users\{username}\AppData\Local\Temp";
+
 
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer()
         {
@@ -22,6 +27,14 @@ namespace downloader
         public Main()
         {
             InitializeComponent();  // Initialize the components of the Form
+
+            button1.FlatAppearance.BorderSize = 0;
+            button1.BackColor = Color.Transparent;
+            button1.FlatAppearance.BorderSize = 0;
+            button1.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            button1.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.UseVisualStyleBackColor = false;  // Stellen Sie sicher, dass der Button immer transparent ist
 
             linkBox.TextChanged += LinkBox_TextChanged;  // Register the text changed event handler for the linkBox control
 
@@ -45,7 +58,7 @@ namespace downloader
         private async void DownloadMp3Bt_Click(object sender, EventArgs e)
         {
             ToggleControls(false);
-            AudioDownloader audioDownloader = new AudioDownloader(linkBox, selectedFolderPath, currentSizeLb, progressBar, historyPanel, tempFolderPath);  // Instantiate AudioDownloader to download audio from YouTube
+            AudioDownloader audioDownloader = new AudioDownloader(linkBox, selectedFolderPath, currentSizeLb, progressBar, historyBox, tempFolderPath);  // Instantiate AudioDownloader to download audio from YouTube
             await audioDownloader.DownloadAudioAsync();  // Asynchronously download the audio file
             linkBox.Text = "";
             ToggleControls(true);
@@ -54,7 +67,7 @@ namespace downloader
         private async void DownloadMp4Bt_Click(object sender, EventArgs e)
         {
             ToggleControls(false);
-            VideoDownloader VideoDownloader = new VideoDownloader(linkBox, currentSizeLb, progressBar, selectedFolderPath, tempFolderPath, historyPanel);  // Instantiate VideoDownloader to download video from YouTube
+            VideoDownloader VideoDownloader = new VideoDownloader(linkBox, currentSizeLb, progressBar, selectedFolderPath, tempFolderPath, historyBox);  // Instantiate VideoDownloader to download video from YouTube
             await VideoDownloader.DownloadVideoAsync(/*cts.Token*/);  // Asynchronously download the video file
             linkBox.Text = "";
             ToggleControls(true);
@@ -115,9 +128,10 @@ namespace downloader
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click_1(object sender, EventArgs e)
         {
-
+            InfoForm infoForm = new InfoForm();
+            infoForm.Show();
         }
     }
 }

@@ -22,21 +22,21 @@ namespace downloader  // Define the namespace for this application
         private ProgressBar progressBar;  // Define a ProgressBar to show the download progress
         private string selectedFolderPath;  // Define a string to hold the selected folder path
         private string tempFolderPath;
-        private Panel historyPanel;
+        private TextBox historyBox;
 
         //string cVideoFilePath;
         //string cAudioFilePath;
         //string cOpusAudioFilePath;
 
         // Define a constructor for the VideoDownloader class
-        public VideoDownloader(TextBox linkBox, Label currentSizeLb, ProgressBar progressBar, string selectedFolderPath, string tempFolderPath, Panel historyPanel)
+        public VideoDownloader(TextBox linkBox, Label currentSizeLb, ProgressBar progressBar, string selectedFolderPath, string tempFolderPath, TextBox historyBox)
         {
             this.linkBox = linkBox;  // Set the TextBox
             this.currentSizeLb = currentSizeLb;  // Set the Label
             this.progressBar = progressBar;  // Set the ProgressBar
             this.selectedFolderPath = selectedFolderPath;  // Set the selected folder path
             this.tempFolderPath = tempFolderPath;
-            this.historyPanel = historyPanel;
+            this.historyBox = historyBox;
         }
 
         // Define an async method to download the video
@@ -67,7 +67,7 @@ namespace downloader  // Define the namespace for this application
 
                     string videoTitle = video.Title;  // save video title
 
-                    UpdateHistory(videoTitle);
+                    historyBox.Text += video.Title + ".mp4" + Environment.NewLine;
 
                     foreach (char c in Path.GetInvalidFileNameChars()) // Read an save evry char in "c"
                     {
@@ -214,19 +214,6 @@ namespace downloader  // Define the namespace for this application
                 currentSizeLb.Text = text;
                 progressBar.Value = (int)(currentProgress * 100);
             }
-        }
-
-        private void UpdateHistory(string videoTitel)
-        {
-            Forms.Label label = new Forms.Label
-            {
-                Text = $"{videoTitel}.mp4",  // Set the label text as "Hi"
-                AutoSize = true,  // Enable auto-sizing of the label based on its content
-                Margin = new Padding(3, 3, 3, 3),  // Set the margin around the label for better spacing
-                Top = historyPanel.Controls.OfType<Forms.Label>().Count() * 25  // Set the vertical position of the label based on the number of existing labels
-            };
-
-            historyPanel.Controls.Add(label);  // Add the label to the panel's controls
         }
     }
 }
