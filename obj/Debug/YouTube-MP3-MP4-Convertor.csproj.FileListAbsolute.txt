@@ -39,3 +39,4 @@ C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\obj\D
 C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\bin\Debug\policy.2.0.taglib-sharp.dll
 C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\bin\Debug\taglib-sharp.dll
 C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\bin\Debug\policy.2.0.taglib-sharp.config
+C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\obj\Debug\Youtube_Videos_Herrunterladen.InfoForm.resources

@@ -45,13 +45,14 @@
             this.downloadMp3Bt = new System.Windows.Forms.Button();
             this.mp3SizeLb = new System.Windows.Forms.Label();
             this.mp4QualityLb = new System.Windows.Forms.Label();
-            this.thumbnailPicBox = new System.Windows.Forms.PictureBox();
             this.thumbnailLb = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.historyPanel = new System.Windows.Forms.Panel();
             this.chanelLb = new System.Windows.Forms.Label();
             this.idLb = new System.Windows.Forms.Label();
             this.uploadDateLb = new System.Windows.Forms.Label();
+            this.historyBox = new System.Windows.Forms.TextBox();
+            this.showInfoFormBt = new System.Windows.Forms.Button();
+            this.thumbnailPicBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.thumbnailPicBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -129,9 +130,9 @@
             this.currentSizeLb.AutoSize = true;
             this.currentSizeLb.Location = new System.Drawing.Point(15, 119);
             this.currentSizeLb.Name = "currentSizeLb";
-            this.currentSizeLb.Size = new System.Drawing.Size(387, 26);
+            this.currentSizeLb.Size = new System.Drawing.Size(550, 26);
             this.currentSizeLb.TabIndex = 8;
-            this.currentSizeLb.Text = "Herruntergeladen: 0 MB / Größe: 0 MB (0%)";
+            this.currentSizeLb.Text = "Herruntergeladen: 0 MB / Größe: 0 MB | Gesamtfortschritt: 0%";
             // 
             // titelLb
             // 
@@ -206,15 +207,6 @@
             this.mp4QualityLb.TabIndex = 16;
             this.mp4QualityLb.Text = ".mp4 Qualität: Kein Link";
             // 
-            // thumbnailPicBox
-            // 
-            this.thumbnailPicBox.Location = new System.Drawing.Point(330, 217);
-            this.thumbnailPicBox.Name = "thumbnailPicBox";
-            this.thumbnailPicBox.Size = new System.Drawing.Size(511, 332);
-            this.thumbnailPicBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.thumbnailPicBox.TabIndex = 18;
-            this.thumbnailPicBox.TabStop = false;
-            // 
             // thumbnailLb
             // 
             this.thumbnailLb.AutoSize = true;
@@ -235,13 +227,6 @@
             this.label2.Size = new System.Drawing.Size(121, 39);
             this.label2.TabIndex = 20;
             this.label2.Text = "Verlauf:";
-            // 
-            // historyPanel
-            // 
-            this.historyPanel.Location = new System.Drawing.Point(872, 53);
-            this.historyPanel.Name = "historyPanel";
-            this.historyPanel.Size = new System.Drawing.Size(502, 622);
-            this.historyPanel.TabIndex = 21;
             // 
             // chanelLb
             // 
@@ -270,6 +255,35 @@
             this.uploadDateLb.TabIndex = 24;
             this.uploadDateLb.Text = "Hochgeladen: Kein Link";
             // 
+            // historyBox
+            // 
+            this.historyBox.Location = new System.Drawing.Point(872, 49);
+            this.historyBox.Multiline = true;
+            this.historyBox.Name = "historyBox";
+            this.historyBox.ReadOnly = true;
+            this.historyBox.Size = new System.Drawing.Size(502, 627);
+            this.historyBox.TabIndex = 26;
+            // 
+            // showInfoFormBt
+            // 
+            this.showInfoFormBt.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.showInfoFormBt.Image = ((System.Drawing.Image)(resources.GetObject("showInfoFormBt.Image")));
+            this.showInfoFormBt.Location = new System.Drawing.Point(834, 117);
+            this.showInfoFormBt.Name = "showInfoFormBt";
+            this.showInfoFormBt.Size = new System.Drawing.Size(31, 31);
+            this.showInfoFormBt.TabIndex = 25;
+            this.showInfoFormBt.UseVisualStyleBackColor = true;
+            this.showInfoFormBt.Click += new System.EventHandler(this.showInfoFormBt_Click);
+            // 
+            // thumbnailPicBox
+            // 
+            this.thumbnailPicBox.Location = new System.Drawing.Point(330, 217);
+            this.thumbnailPicBox.Name = "thumbnailPicBox";
+            this.thumbnailPicBox.Size = new System.Drawing.Size(511, 332);
+            this.thumbnailPicBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.thumbnailPicBox.TabIndex = 18;
+            this.thumbnailPicBox.TabStop = false;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 26F);
@@ -277,10 +291,11 @@
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(1386, 688);
+            this.Controls.Add(this.historyBox);
+            this.Controls.Add(this.showInfoFormBt);
             this.Controls.Add(this.uploadDateLb);
             this.Controls.Add(this.idLb);
             this.Controls.Add(this.chanelLb);
-            this.Controls.Add(this.historyPanel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.thumbnailLb);
             this.Controls.Add(this.mp4QualityLb);
@@ -332,10 +347,11 @@
         private System.Windows.Forms.PictureBox thumbnailPicBox;
         private System.Windows.Forms.Label thumbnailLb;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Panel historyPanel;
         private System.Windows.Forms.Label chanelLb;
         private System.Windows.Forms.Label idLb;
         private System.Windows.Forms.Label uploadDateLb;
+        private System.Windows.Forms.Button showInfoFormBt;
+        private System.Windows.Forms.TextBox historyBox;
     }
 }
 
