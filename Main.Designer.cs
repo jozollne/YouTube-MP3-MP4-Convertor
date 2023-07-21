@@ -259,7 +259,7 @@
             // 
             this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.button1.Image = global::Youtube_Videos_Herrunterladen.Properties.Resources.icons8_info_50;
-            this.button1.Location = new System.Drawing.Point(592, 116);
+            this.button1.Location = new System.Drawing.Point(571, 116);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(32, 32);
             this.button1.TabIndex = 25;
