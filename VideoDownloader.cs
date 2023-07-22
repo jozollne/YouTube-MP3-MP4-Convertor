@@ -1,31 +1,34 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using YoutubeExplode.Videos.Streams;
 
-namespace downloader
+namespace Youtube_Videos_Herrunterladen
 {
     internal class VideoDownloader
     {
-        private Main main;
-        private TextBox linkBox;
-        private Label currentSizeLb;
-        private ProgressBar progressBar;
-        private string selectedFolderPath;
-        private string tempFolderPath;
-        private TextBox historyBox;
+        private readonly Main main;
+        private readonly Label currentSizeLb;
+        private readonly ProgressBar progressBar;
+        private readonly string selectedFolderPath;
+        private readonly string tempFolderPath;
+        private readonly TextBox historyBox;
+        private readonly ComboBox mp4QualityComboBox;
+        private readonly Utilityclass utilityclass;
 
-        public VideoDownloader(Main main, TextBox linkBox, Label currentSizeLb, ProgressBar progressBar, string selectedFolderPath, string tempFolderPath, TextBox historyBox)
+        public VideoDownloader(Utilityclass utilityclass, Main main, Label currentSizeLb, ProgressBar progressBar, string selectedFolderPath, string tempFolderPath, TextBox historyBox, ComboBox mp4QualityComboBox)
         {
-            this.linkBox = linkBox;
             this.currentSizeLb = currentSizeLb;
             this.progressBar = progressBar;
             this.selectedFolderPath = selectedFolderPath;
             this.tempFolderPath = tempFolderPath;
             this.historyBox = historyBox;
+            this.mp4QualityComboBox = mp4QualityComboBox;
             this.main = main;
+            this.utilityclass = utilityclass;
         }
 
         // Method to download video asynchronously
@@ -33,32 +36,23 @@ namespace downloader
         {
             try
             {
-                var videoUrl = linkBox.Text;  // Get the video URL from the TextBox
-                var uri = new Uri(videoUrl);  // Parse the video URL into a Uri object
-                var videoId = uri.Query.TrimStart('?').Split('&')[0].Substring(2);  // Extract the video ID from the query string of the URL
-                var video = await main.youtube.Videos.GetAsync(videoId);  // Get the video information from YouTube
-
-                main.infoForm.infoBox.Text = $"Download von Video mit ID {videoId} wird gestartet...\r\n";
-
+                main.infoForm.infoBox.Text = $"Download von Video mit ID {main.streamId} wird gestartet...\r\n";
                 main.infoForm.infoBox.AppendText("Stream-Informationen werden abgerufen...\r\n");
-                var streamManifest = await main.youtube.Videos.Streams.GetManifestAsync(videoId);  // Get the video stream manifest from YouTube
-                var videoStreamInfo = streamManifest.GetVideoStreams().GetWithHighestVideoQuality();  // Get the video stream info with the highest video quality
-                var audioStreamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();  // Get the audio stream info with the highest bitrate
 
-                if (videoStreamInfo != null && audioStreamInfo != null)  // Check if both video and audio stream info are not null
+                if (main.videoStreamInfo != null && main.audioStreamInfo != null)  // Check if both video and audio stream info are not null
                 {
                     main.infoForm.infoBox.AppendText("Stream-Informationen erfolgreich abgerufen...\r\n");
 
-                    long videoBytes = videoStreamInfo.Size.Bytes;  // Get the total size of the video stream in bytes
-                    long audioBytes = audioStreamInfo.Size.Bytes;  // Get the total size of the audio stream in bytes
+                    long videoBytes = main.videoStreamInfo.Size.Bytes;  // Get the total size of the video stream in bytes
+                    long audioBytes = main.audioStreamInfo.Size.Bytes;  // Get the total size of the audio stream in bytes
                     long totalBytes = videoBytes + audioBytes;  // Calculate the total size of video and audio streams
 
-                    string videoSize = main.FormatBytes(videoBytes);  // Convert the video size to a human-readable format
-                    string audioSize = main.FormatBytes(audioBytes);  // Convert the audio size to a human-readable format
-                    string totalSize = main.FormatBytes(totalBytes);  // Convert the total size to a human-readable format
+                    string videoSize = utilityclass.FormatBytes(videoBytes);  // Convert the video size to a human-readable format
+                    string audioSize = utilityclass.FormatBytes(audioBytes);  // Convert the audio size to a human-readable format
+                    string totalSize = utilityclass.FormatBytes(totalBytes);  // Convert the total size to a human-readable format
 
-                    string videoTitle = video.Title;  // Get the video title
-                    historyBox.Text += video.Title + ".mp4";  // Append the video title to the history box
+                    string videoTitle = main.stream.Title + " " + mp4QualityComboBox.Text;  // Get the video title
+                    historyBox.Text += main.stream.Title + " " + mp4QualityComboBox.Text + ".mp4";  // Append the video title to the history box
 
                     foreach (char c in Path.GetInvalidFileNameChars())  // Replace invalid characters in the video title with '_'
                     {
@@ -76,20 +70,20 @@ namespace downloader
 
 
                     // Download the video stream asynchronously and update the progress for video download
-                    main.infoForm.infoBox.AppendText("Video-Download startet...\r\n");
+                    main.infoForm.infoBox.AppendText("Video-Download gestartet...\r\n");
                     var videoProgress = new Progress<double>(p => UpdateProgress(p, totalSize, totalBytes, true));
-                    await main.youtube.Videos.Streams.DownloadAsync(videoStreamInfo, tempVideoFilePath, progress: videoProgress);
+                    await main.youtube.Videos.Streams.DownloadAsync(main.videoStreamInfo, tempVideoFilePath, progress: videoProgress);
                     main.infoForm.infoBox.AppendText("Video-Download erfolgreich...\r\n");
 
                     // Download the audio stream asynchronously and update the progress for audio download
-                    main.infoForm.infoBox.AppendText("Audio-Download startet...\r\n");
+                    main.infoForm.infoBox.AppendText("Audio-Download gestartet...\r\n");
                     var audioProgress = new Progress<double>(p => UpdateProgress(p, totalSize, totalBytes, false));
-                    await main.youtube.Videos.Streams.DownloadAsync(audioStreamInfo, rawAudioFilePath, progress: audioProgress);
+                    await main.youtube.Videos.Streams.DownloadAsync(main.audioStreamInfo, rawAudioFilePath, progress: audioProgress);
                     main.infoForm.infoBox.AppendText("Audio-Download erfolgreich...\r\n");
 
                     // Convert the raw audio file to a final audio file
                     main.infoForm.infoBox.AppendText("Audio-Datei wird konvertiert...\r\n");
-                    main.GetMp3FormatAndConvert(rawAudioFilePath, tempAudioFilePath);
+                    utilityclass.GetMp3FormatAndConvert(rawAudioFilePath, tempAudioFilePath);
 
                     var FinalVideoFilePath = Path.Combine(selectedFolderPath, $@"{videoTitle}.mp4");  // Combine the selected folder path and the video title to form the final video file path
 
@@ -158,7 +152,7 @@ namespace downloader
             double currentProgress = isVideo ? progress / 2 : 0.5 + progress / 2;  // Calculate the current progress
             long currentSize = (long)(totalBytes * currentProgress);  // Calculate the current size based on the progress
 
-            string text = $"Herruntergeladen: {main.FormatBytes(currentSize)} / Größe: {totalSize} | Gesamtfortschritt: {currentProgress * 100:n2}%";  // Format the progress into a text format
+            string text = $"Herruntergeladen: {utilityclass.FormatBytes(currentSize)} / Größe: {totalSize} | Gesamtfortschritt: {currentProgress * 100:n2}%";  // Format the progress into a text format
 
             if (currentSizeLb.InvokeRequired)  // If access to the UI element is needed
             {

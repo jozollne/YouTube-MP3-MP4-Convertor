@@ -1,4 +1,4 @@
-﻿namespace downloader
+﻿namespace Youtube_Videos_Herrunterladen
 {
     partial class Main
     {
@@ -37,7 +37,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.mp4SizeLb = new System.Windows.Forms.Label();
             this.currentSizeLb = new System.Windows.Forms.Label();
-            this.titelLb = new System.Windows.Forms.Label();
+            this.titleLb = new System.Windows.Forms.Label();
             this.durationLb = new System.Windows.Forms.Label();
             this.usbSticksPanel = new System.Windows.Forms.Panel();
             this.subLb2 = new System.Windows.Forms.Label();
@@ -47,12 +47,13 @@
             this.mp4QualityLb = new System.Windows.Forms.Label();
             this.thumbnailLb = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.chanelLb = new System.Windows.Forms.Label();
+            this.channelLb = new System.Windows.Forms.Label();
             this.idLb = new System.Windows.Forms.Label();
             this.uploadDateLb = new System.Windows.Forms.Label();
             this.historyBox = new System.Windows.Forms.TextBox();
             this.showInfoFormBt = new System.Windows.Forms.Button();
             this.thumbnailPicBox = new System.Windows.Forms.PictureBox();
+            this.mp4QualityComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.thumbnailPicBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -134,14 +135,14 @@
             this.currentSizeLb.TabIndex = 8;
             this.currentSizeLb.Text = "Herruntergeladen: 0 MB / Größe: 0 MB | Gesamtfortschritt: 0%";
             // 
-            // titelLb
+            // titleLb
             // 
-            this.titelLb.AutoSize = true;
-            this.titelLb.Location = new System.Drawing.Point(20, 191);
-            this.titelLb.Name = "titelLb";
-            this.titelLb.Size = new System.Drawing.Size(137, 26);
-            this.titelLb.TabIndex = 9;
-            this.titelLb.Text = "Titel: Kein Link";
+            this.titleLb.AutoSize = true;
+            this.titleLb.Location = new System.Drawing.Point(20, 191);
+            this.titleLb.Name = "titleLb";
+            this.titleLb.Size = new System.Drawing.Size(137, 26);
+            this.titleLb.TabIndex = 9;
+            this.titleLb.Text = "Titel: Kein Link";
             // 
             // durationLb
             // 
@@ -154,7 +155,7 @@
             // 
             // usbSticksPanel
             // 
-            this.usbSticksPanel.Location = new System.Drawing.Point(20, 465);
+            this.usbSticksPanel.Location = new System.Drawing.Point(25, 478);
             this.usbSticksPanel.Name = "usbSticksPanel";
             this.usbSticksPanel.Size = new System.Drawing.Size(235, 120);
             this.usbSticksPanel.TabIndex = 11;
@@ -163,7 +164,7 @@
             // 
             this.subLb2.AutoSize = true;
             this.subLb2.Font = new System.Drawing.Font("Calibri", 24F, System.Drawing.FontStyle.Bold);
-            this.subLb2.Location = new System.Drawing.Point(13, 426);
+            this.subLb2.Location = new System.Drawing.Point(18, 439);
             this.subLb2.Name = "subLb2";
             this.subLb2.Size = new System.Drawing.Size(165, 39);
             this.subLb2.TabIndex = 12;
@@ -177,7 +178,7 @@
             this.selectFolderButton.TabIndex = 1;
             this.selectFolderButton.Text = "Speicherort ändern";
             this.selectFolderButton.UseVisualStyleBackColor = true;
-            this.selectFolderButton.Click += new System.EventHandler(this.selectFolderButton_Click);
+            this.selectFolderButton.Click += new System.EventHandler(this.SelectFolderButton_Click);
             // 
             // downloadMp3Bt
             // 
@@ -203,9 +204,9 @@
             this.mp4QualityLb.AutoSize = true;
             this.mp4QualityLb.Location = new System.Drawing.Point(20, 373);
             this.mp4QualityLb.Name = "mp4QualityLb";
-            this.mp4QualityLb.Size = new System.Drawing.Size(218, 26);
+            this.mp4QualityLb.Size = new System.Drawing.Size(136, 26);
             this.mp4QualityLb.TabIndex = 16;
-            this.mp4QualityLb.Text = ".mp4 Qualität: Kein Link";
+            this.mp4QualityLb.Text = ".mp4 Qualität:";
             // 
             // thumbnailLb
             // 
@@ -228,14 +229,14 @@
             this.label2.TabIndex = 20;
             this.label2.Text = "Verlauf:";
             // 
-            // chanelLb
+            // channelLb
             // 
-            this.chanelLb.AutoSize = true;
-            this.chanelLb.Location = new System.Drawing.Point(20, 243);
-            this.chanelLb.Name = "chanelLb";
-            this.chanelLb.Size = new System.Drawing.Size(147, 26);
-            this.chanelLb.TabIndex = 22;
-            this.chanelLb.Text = "Kanal: Kein Link";
+            this.channelLb.AutoSize = true;
+            this.channelLb.Location = new System.Drawing.Point(20, 243);
+            this.channelLb.Name = "channelLb";
+            this.channelLb.Size = new System.Drawing.Size(147, 26);
+            this.channelLb.TabIndex = 22;
+            this.channelLb.Text = "Kanal: Kein Link";
             // 
             // idLb
             // 
@@ -273,7 +274,7 @@
             this.showInfoFormBt.Size = new System.Drawing.Size(31, 31);
             this.showInfoFormBt.TabIndex = 25;
             this.showInfoFormBt.UseVisualStyleBackColor = true;
-            this.showInfoFormBt.Click += new System.EventHandler(this.showInfoFormBt_Click);
+            this.showInfoFormBt.Click += new System.EventHandler(this.ShowInfoFormBt_Click);
             // 
             // thumbnailPicBox
             // 
@@ -284,6 +285,15 @@
             this.thumbnailPicBox.TabIndex = 18;
             this.thumbnailPicBox.TabStop = false;
             // 
+            // mp4QualityComboBox
+            // 
+            this.mp4QualityComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.mp4QualityComboBox.FormattingEnabled = true;
+            this.mp4QualityComboBox.Location = new System.Drawing.Point(20, 402);
+            this.mp4QualityComboBox.Name = "mp4QualityComboBox";
+            this.mp4QualityComboBox.Size = new System.Drawing.Size(222, 34);
+            this.mp4QualityComboBox.TabIndex = 27;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 26F);
@@ -291,11 +301,12 @@
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(1386, 688);
+            this.Controls.Add(this.mp4QualityComboBox);
             this.Controls.Add(this.historyBox);
             this.Controls.Add(this.showInfoFormBt);
             this.Controls.Add(this.uploadDateLb);
             this.Controls.Add(this.idLb);
-            this.Controls.Add(this.chanelLb);
+            this.Controls.Add(this.channelLb);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.thumbnailLb);
             this.Controls.Add(this.mp4QualityLb);
@@ -305,7 +316,7 @@
             this.Controls.Add(this.subLb2);
             this.Controls.Add(this.usbSticksPanel);
             this.Controls.Add(this.durationLb);
-            this.Controls.Add(this.titelLb);
+            this.Controls.Add(this.titleLb);
             this.Controls.Add(this.currentSizeLb);
             this.Controls.Add(this.mp4SizeLb);
             this.Controls.Add(this.label1);
@@ -328,6 +339,7 @@
 
         #endregion
 
+        private System.Windows.Forms.ComboBox mp4QualityComboBox;
         private System.Windows.Forms.TextBox linkBox;
         private System.Windows.Forms.Button downloadMp4Bt;
         private System.Windows.Forms.Label subLb1;
@@ -336,7 +348,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label mp4SizeLb;
         private System.Windows.Forms.Label currentSizeLb;
-        private System.Windows.Forms.Label titelLb;
+        private System.Windows.Forms.Label titleLb;
         private System.Windows.Forms.Label durationLb;
         private System.Windows.Forms.Panel usbSticksPanel;
         private System.Windows.Forms.Label subLb2;
@@ -347,7 +359,7 @@
         private System.Windows.Forms.PictureBox thumbnailPicBox;
         private System.Windows.Forms.Label thumbnailLb;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label chanelLb;
+        private System.Windows.Forms.Label channelLb;
         private System.Windows.Forms.Label idLb;
         private System.Windows.Forms.Label uploadDateLb;
         private System.Windows.Forms.Button showInfoFormBt;

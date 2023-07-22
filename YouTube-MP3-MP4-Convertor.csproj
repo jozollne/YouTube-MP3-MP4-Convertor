@@ -115,8 +115,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="UsbManager.cs" />
+    <Compile Include="Utilityclass.cs" />
     <Compile Include="VideoDownloader.cs" />
     <Compile Include="StatsUpdater.cs" />
+    <Compile Include="VideoAndAudioSizeUpdater.cs" />
     <EmbeddedResource Include="InfoForm.resx">
       <DependentUpon>InfoForm.cs</DependentUpon>
     </EmbeddedResource>

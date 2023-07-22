@@ -29,7 +29,6 @@ C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\bin\D
 C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\bin\Debug\YoutubeExplode.xml
 C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\obj\Debug\YouTube-MP3-MP4-Convertor.csproj.AssemblyReference.cache
 C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\obj\Debug\YouTube-MP3-MP4-Convertor.csproj.SuggestedBindingRedirects.cache
-C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\obj\Debug\downloader.Main.resources
 C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\obj\Debug\Youtube_Videos_Herrunterladen.Properties.Resources.resources
 C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\obj\Debug\YouTube-MP3-MP4-Convertor.csproj.GenerateResource.cache
 C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\obj\Debug\YouTube-MP3-MP4-Convertor.csproj.CoreCompileInputs.cache
@@ -40,3 +39,4 @@ C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\bin\D
 C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\bin\Debug\taglib-sharp.dll
 C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\bin\Debug\policy.2.0.taglib-sharp.config
 C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\obj\Debug\Youtube_Videos_Herrunterladen.InfoForm.resources
+C:\Users\jozollne\OneDrive\Programieren\C#\Forms\YouTube-MP3-MP4-Convertor\obj\Debug\Youtube_Videos_Herrunterladen.Main.resources

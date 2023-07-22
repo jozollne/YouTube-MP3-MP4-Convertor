@@ -4,21 +4,19 @@ using System.Linq;  // Import the System.Linq namespace for working with collect
 using System.Windows.Forms;  // Import the System.Windows.Forms namespace for working with Windows Forms
 using Forms = System.Windows.Forms;  // Alias the System.Windows.Forms namespace to 'Forms' for better readability
 
-namespace downloader
+namespace Youtube_Videos_Herrunterladen
 {
     internal class UsbManager
     {
-        private Main main;  // Field to store the Main class reference
-        private Panel usbSticksPanel;  // Field to store the Panel control used for displaying USB stick labels
-        private string selectedFolderPath;  // Field to store the selected folder path
-        private Label subLb1;  // Field to hold the Label control for displaying the selected folder path
+        private readonly Main main;
+        private readonly Panel usbSticksPanel;  // Field to store the Panel control used for displaying USB stick labels
+        private readonly Label subLb1;  // Field to hold the Label control for displaying the selected folder path
 
-        public UsbManager(Main main, Panel usbSticksPanel, Label subLb1, string selectedFolderPath)
+        public UsbManager(Main main, Panel usbSticksPanel, Label subLb1)
         {
             this.usbSticksPanel = usbSticksPanel;  // Assign the passed-in Panel to the usbSticksPanel field
             this.subLb1 = subLb1;  // Assign the passed-in Label to the subLb1 field
-            this.selectedFolderPath = selectedFolderPath;  // Assign the passed-in selectedFolderPath to the selectedFolderPath field
-            this.main = main;  // Assign the passed-in Main class reference to the main field
+            this.main = main;
         }
 
         public void UpdateUsbLabels(object sender, EventArgs e)
@@ -51,9 +49,8 @@ namespace downloader
 
             label.Click += (s, e) => // Set up a click event handler
             {
-                selectedFolderPath = driveName;  // Update the selectedFolderPath field with the current drive name
+                main.selectedFolderPath = driveName;  // Update the selectedFolderPath field with the current drive name
                 subLb1.Text = "Speicherort: " + $"{driveLabel} ({driveName})";  // Update the subLb1 label to display the selected folder path
-                main.SetSelectedFolderPath(driveName);  // Update the selectedFolderPath in Main class
             };
 
             usbSticksPanel.Controls.Add(label);  // Add the label to the usbSticksPanel
