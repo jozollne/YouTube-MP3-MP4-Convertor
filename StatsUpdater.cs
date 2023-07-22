@@ -44,147 +44,75 @@ namespace downloader
         public async Task UpdateVideoStatsAsync()
         {
             // Initialization of a variable to store the current video ID
-            string currentVideoId = "";
-            var videoUrl = linkBox.Text;
 
             try
             {
+                // Getting video information using the YoutubeExplode library
+                var videoUrl = linkBox.Text;
                 var uri = new Uri(videoUrl);
                 var videoId = uri.Query.TrimStart('?').Split('&')[0].Substring(2);
+                var video = await main.youtube.Videos.GetAsync(videoId);
+                var streamManifest = await main.youtube.Videos.Streams.GetManifestAsync(videoId);
+                var videoStreamInfo = streamManifest.GetVideoOnlyStreams().GetWithHighestVideoQuality();
+                var audioStreamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
+                IStreamInfo videoStreamInfoForSize = main.GetMp4VideoSize(streamManifest);
 
-                if (currentVideoId != videoId)
+                VideoAndAudioSizeUpdater videoAndAudioSizeUpdater = new VideoAndAudioSizeUpdater(main, mp4QualityComboBox, mp4SizeLb, mp3SizeLb, linkBox);
+                await videoAndAudioSizeUpdater.UpdateVideoAndAudioSize();
+
+                // Updating the corresponding Labels in the main window with the video information
+                titleLb.Text = "Titel: \"" + video.Title + "\"";
+                idLb.Text = "ID: " + video.Id;
+                channelLb.Text = $"Kanal: {video.Author}";
+                DateTimeOffset uploadDateOffset = video.UploadDate;
+                DateTime uploadDate = uploadDateOffset.DateTime;
+                string uploadDateString = uploadDate.ToShortDateString();
+                uploadDateLb.Text = $"Hochgeladen: {uploadDateString}";
+                durationLb.Text = $"Dauer: {video.Duration}";
+
+
+                // Get the thumbnail
+                try
                 {
-                    currentVideoId = videoId;
+                    var thumbnail = video.Thumbnails.OrderByDescending(t => t.Resolution.Width * t.Resolution.Height).FirstOrDefault();  // Get the highest resolution thumbnail
 
-                    // Getting video information using the YoutubeExplode library
-                    var video = await main.youtube.Videos.GetAsync(videoId);
-
-                    // Getting stream information for video and audio
-                    var streamManifest = await main.youtube.Videos.Streams.GetManifestAsync(videoId);
-                    var videoStreamInfo = streamManifest.GetVideoOnlyStreams().GetWithHighestVideoQuality();
-                    IStreamInfo videoStreamInfoForSize = main.GetMp4VideoSize(streamManifest);
-
-                    var uniqueStreamInfos = streamManifest.GetVideoOnlyStreams()
-                        .GroupBy(s => s.VideoQuality)
-                        .Select(g => g.First())
-                        .OrderByDescending(s => s.VideoQuality);
-
-                    // Display the avalible Video streams in the ComboBox
-                    foreach (var streamInfo in uniqueStreamInfos)
+                    if (thumbnail != null)
                     {
-                        string qualityDescriptor = "";
-                        string qualityLabel = Convert.ToString(streamInfo.VideoQuality);
+                        string thumbnailUrl = thumbnail.Url;  // Get the thumbnail URL
 
-                        if (qualityLabel.Contains("4320"))
+                        using (var httpClient = new HttpClient())  // Create a new HttpClient for HTTP communications
                         {
-                            qualityDescriptor = "8K";
-                        }
-                        else if (qualityLabel.Contains("2160"))
-                        {
-                            qualityDescriptor = "4K";
-                        }
-                        else if (qualityLabel.Contains("1440"))
-                        {
-                            qualityDescriptor = "2K/QHD";
-                        }
-                        else if (qualityLabel.Contains("1080"))
-                        {
-                            qualityDescriptor = "Full-HD";
-                        }
-                        else if (qualityLabel.Contains("720"))
-                        {
-                            qualityDescriptor = "HD";
-                        }
-                        else if (qualityLabel.Contains("480"))
-                        {
-                            qualityDescriptor = "SD";
-                        }
-                        else if (qualityLabel.Contains("360"))
-                        {
-                            qualityDescriptor = "nHD";
-                        }
-                        else if (qualityLabel.Contains("240"))
-                        {
-                            qualityDescriptor = "FQVGA";
-                        }
-                        else if (qualityLabel.Contains("144"))
-                        {
-                            qualityDescriptor = "Low";
-                        }
-                        if (!mp4QualityComboBox.Items.Contains($"{qualityLabel} ({qualityDescriptor})")) // Check if the5 video quality entry exists. If so dont add a new entry
-                            mp4QualityComboBox.Items.Add($"{qualityLabel} ({qualityDescriptor})");
-                        if (mp4QualityComboBox.SelectedIndex == -1)
-                            mp4QualityComboBox.SelectedItem = "144p (Low)";  // Sets Low as default quality
-                    }
+                            var thumbnailResponse = await httpClient.GetAsync(thumbnailUrl);  // Send a GET request to the thumbnail URL
 
-
-                    var audioStreamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
-
-                    if (videoStreamInfo != null && audioStreamInfo != null)
-                    {
-                        // Calculating the size of video and audio streams in bytes and converting to a readable format
-                        long totalVideoBytes = videoStreamInfoForSize.Size.Bytes;
-                        string totalVideoSize = main.FormatBytes(totalVideoBytes);
-
-                        long totalAudioBytes = audioStreamInfo.Size.Bytes;
-                        string totalAudioSize = main.FormatBytes(totalAudioBytes);
-
-                        // Updating the corresponding Labels in the main window with the video information
-                        titleLb.Text = "Titel: \"" + video.Title + "\"";
-                        idLb.Text = "ID: " + video.Id;
-                        channelLb.Text = $"Kanal: {video.Author}";
-                        DateTimeOffset uploadDateOffset = video.UploadDate;
-                        DateTime uploadDate = uploadDateOffset.DateTime;
-                        string uploadDateString = uploadDate.ToShortDateString();
-                        uploadDateLb.Text = $"Hochgeladen: {uploadDateString}";
-                        durationLb.Text = $"Dauer: {video.Duration}";
-                        mp4SizeLb.Text = $".mp4 Größe: {totalVideoSize}";
-                        mp3SizeLb.Text = $".mp3 Größe: {totalAudioSize}";
-
-                        // Get the thumbnail
-                        try
-                        {
-                            var thumbnail = video.Thumbnails.OrderByDescending(t => t.Resolution.Width * t.Resolution.Height).FirstOrDefault();  // Get the highest resolution thumbnail
-
-                            if (thumbnail != null)
+                            if (thumbnailResponse.IsSuccessStatusCode)  // Check if the response was successful
                             {
-                                string thumbnailUrl = thumbnail.Url;  // Get the thumbnail URL
+                                var thumbnailStream = await thumbnailResponse.Content.ReadAsStreamAsync();  // Get the response content as a Stream
 
-                                using (var httpClient = new HttpClient())  // Create a new HttpClient for HTTP communications
+                                if (thumbnailPicBox.InvokeRequired)  // Check if the PictureBox control's InvokeRequired property is true
                                 {
-                                    var thumbnailResponse = await httpClient.GetAsync(thumbnailUrl);  // Send a GET request to the thumbnail URL
-
-                                    if (thumbnailResponse.IsSuccessStatusCode)  // Check if the response was successful
+                                    thumbnailPicBox.Invoke(new MethodInvoker(delegate  // Use the Invoke method to update the PictureBox control
                                     {
-                                        var thumbnailStream = await thumbnailResponse.Content.ReadAsStreamAsync();  // Get the response content as a Stream
-
-                                        if (thumbnailPicBox.InvokeRequired)  // Check if the PictureBox control's InvokeRequired property is true
-                                        {
-                                            thumbnailPicBox.Invoke(new MethodInvoker(delegate  // Use the Invoke method to update the PictureBox control
-                                            {
-                                                thumbnailPicBox.Image = Image.FromStream(thumbnailStream);  // Load the thumbnail image from the Stream
-                                            }));
-                                        }
-                                        else
-                                        {
-                                            thumbnailPicBox.Image = Image.FromStream(thumbnailStream);  // Load the thumbnail image from the Stream
-                                        }
-                                    }
+                                        thumbnailPicBox.Image = Image.FromStream(thumbnailStream);  // Load the thumbnail image from the Stream
+                                    }));
+                                }
+                                else
+                                {
+                                    thumbnailPicBox.Image = Image.FromStream(thumbnailStream);  // Load the thumbnail image from the Stream
                                 }
                             }
                         }
-                        catch
-                        {
-                            PictureError();
-                        }
                     }
                 }
+                catch
+                {
+                    PictureError();
+                }
+                
+                
             }
             catch
             {
                 // Clear evrythig when the link is empty
-                currentVideoId = null;
-                videoUrl = null;
                 titleLb.Text = "Titel: Kein Link";
                 idLb.Text = "ID: Kein Link";
                 channelLb.Text = "Kanal: Kein Link";

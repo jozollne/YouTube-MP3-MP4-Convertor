@@ -3,13 +3,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;  
-using TagLib;
 using Youtube_Videos_Herrunterladen;
-using Youtube_Videos_Herrunterladen.Properties;
 using YoutubeExplode;
-using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 
 namespace downloader
@@ -21,6 +17,7 @@ namespace downloader
         public string selectedFolderPath = $@"C:\Users\{username}\Downloads\"; // Set the default download location to the current user's Downloads folder
         private string tempFolderPath = $@"C:\Users\{username}\AppData\Local\Temp";
         public InfoForm infoForm = new InfoForm();  // Define the infoForm outside the method.
+        string videoUrl;
 
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer() // Create a timer to trigger events at regular intervals
         {
@@ -51,6 +48,17 @@ namespace downloader
             subLb1.Text = "Speicherort: " + selectedFolderPath;  // Set the initial text of subLb1 to the selected folder path
         }
 
+        public async void getStreamInfos()
+        {
+            var videoUrl = linkBox.Text;
+            var uri = new Uri(videoUrl);
+            var videoId = uri.Query.TrimStart('?').Split('&')[0].Substring(2);
+            var video = await youtube.Videos.GetAsync(videoId);
+            var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
+            var audioStreamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
+            IStreamInfo videoStreamInfo = GetMp4VideoSize(streamManifest);
+        }
+
         // Instantiate StatsUpdater to manage YouTube video stats
         private async void LinkBox_TextChanged(object sender, EventArgs e)
         {
@@ -61,9 +69,8 @@ namespace downloader
 
         private async void ComboBox_TextChanged(object sender, EventArgs e)
         {
-            //VideoQualityUpdater videoQualityUpdater = new VideoQualityUpdater();
-            StatsUpdater statsUpdater = new StatsUpdater(this, linkBox, titelLb, durationLb, mp4SizeLb, mp3SizeLb, mp4QualityLb, thumbnailPicBox, chanelLb, idLb, uploadDateLb, mp4QualityComboBox);
-            await statsUpdater.UpdateVideoStatsAsync();  // Asynchronously update the video stats
+            VideoAndAudioSizeUpdater videoAndAudioSizeUpdater = new VideoAndAudioSizeUpdater(this, mp4QualityComboBox, mp4SizeLb, mp3SizeLb, linkBox);
+            await videoAndAudioSizeUpdater.UpdateVideoAndAudioSize();
         }
 
         // This method handles the click event for the DownloadMp3Bt Button

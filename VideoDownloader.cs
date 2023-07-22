@@ -40,13 +40,12 @@ namespace downloader
                 var uri = new Uri(videoUrl);  // Parse the video URL into a Uri object
                 var videoId = uri.Query.TrimStart('?').Split('&')[0].Substring(2);  // Extract the video ID from the query string of the URL
                 var video = await main.youtube.Videos.GetAsync(videoId);  // Get the video information from YouTube
+                var streamManifest = await main.youtube.Videos.Streams.GetManifestAsync(videoId);  // Get the video stream manifest from YouTube
+                var audioStreamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();  // Get the audio stream info with the highest bitrate
+                IStreamInfo videoStreamInfo = main.GetMp4VideoSize(streamManifest);
 
                 main.infoForm.infoBox.Text = $"Download von Video mit ID {videoId} wird gestartet...\r\n";
-
                 main.infoForm.infoBox.AppendText("Stream-Informationen werden abgerufen...\r\n");
-                var streamManifest = await main.youtube.Videos.Streams.GetManifestAsync(videoId);  // Get the video stream manifest from YouTube
-                IStreamInfo videoStreamInfo = main.GetMp4VideoSize(streamManifest);
-                var audioStreamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();  // Get the audio stream info with the highest bitrate
 
                 if (videoStreamInfo != null && audioStreamInfo != null)  // Check if both video and audio stream info are not null
                 {
