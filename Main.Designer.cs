@@ -53,6 +53,7 @@
             this.historyBox = new System.Windows.Forms.TextBox();
             this.showInfoFormBt = new System.Windows.Forms.Button();
             this.thumbnailPicBox = new System.Windows.Forms.PictureBox();
+            this.mp4QualityComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.thumbnailPicBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -154,7 +155,7 @@
             // 
             // usbSticksPanel
             // 
-            this.usbSticksPanel.Location = new System.Drawing.Point(20, 465);
+            this.usbSticksPanel.Location = new System.Drawing.Point(25, 478);
             this.usbSticksPanel.Name = "usbSticksPanel";
             this.usbSticksPanel.Size = new System.Drawing.Size(235, 120);
             this.usbSticksPanel.TabIndex = 11;
@@ -163,7 +164,7 @@
             // 
             this.subLb2.AutoSize = true;
             this.subLb2.Font = new System.Drawing.Font("Calibri", 24F, System.Drawing.FontStyle.Bold);
-            this.subLb2.Location = new System.Drawing.Point(13, 426);
+            this.subLb2.Location = new System.Drawing.Point(18, 439);
             this.subLb2.Name = "subLb2";
             this.subLb2.Size = new System.Drawing.Size(165, 39);
             this.subLb2.TabIndex = 12;
@@ -203,9 +204,9 @@
             this.mp4QualityLb.AutoSize = true;
             this.mp4QualityLb.Location = new System.Drawing.Point(20, 373);
             this.mp4QualityLb.Name = "mp4QualityLb";
-            this.mp4QualityLb.Size = new System.Drawing.Size(218, 26);
+            this.mp4QualityLb.Size = new System.Drawing.Size(136, 26);
             this.mp4QualityLb.TabIndex = 16;
-            this.mp4QualityLb.Text = ".mp4 Qualität: Kein Link";
+            this.mp4QualityLb.Text = ".mp4 Qualität:";
             // 
             // thumbnailLb
             // 
@@ -284,6 +285,15 @@
             this.thumbnailPicBox.TabIndex = 18;
             this.thumbnailPicBox.TabStop = false;
             // 
+            // mp4QualityComboBox
+            // 
+            this.mp4QualityComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.mp4QualityComboBox.FormattingEnabled = true;
+            this.mp4QualityComboBox.Location = new System.Drawing.Point(20, 402);
+            this.mp4QualityComboBox.Name = "mp4QualityComboBox";
+            this.mp4QualityComboBox.Size = new System.Drawing.Size(222, 34);
+            this.mp4QualityComboBox.TabIndex = 27;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 26F);
@@ -291,6 +301,7 @@
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(1386, 688);
+            this.Controls.Add(this.mp4QualityComboBox);
             this.Controls.Add(this.historyBox);
             this.Controls.Add(this.showInfoFormBt);
             this.Controls.Add(this.uploadDateLb);
@@ -352,6 +363,7 @@
         private System.Windows.Forms.Label uploadDateLb;
         private System.Windows.Forms.Button showInfoFormBt;
         private System.Windows.Forms.TextBox historyBox;
+        private System.Windows.Forms.ComboBox mp4QualityComboBox;
     }
 }
 

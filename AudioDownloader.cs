@@ -65,7 +65,7 @@ namespace downloader
 
                     if (File.Exists(finalAudioFilePath)) File.Delete(finalAudioFilePath);  // If the audio file already exists, delete it
 
-                    main.infoForm.infoBox.AppendText("Audio-Download startet...\r\n");
+                    main.infoForm.infoBox.AppendText("Audio-Download gestartet...\r\n");
                     var audioProgress = new Progress<double>(p => UpdateProgress(p, audioSize, audioBytes));  // Create a progress object for the audio
                     await main.youtube.Videos.Streams.DownloadAsync(audioStreamInfo, rawAudioFilePath, progress: audioProgress);  // Download the audio stream asynchronously and update the progress
                     main.infoForm.infoBox.AppendText("Audio-Download erfolgreich...\r\n");

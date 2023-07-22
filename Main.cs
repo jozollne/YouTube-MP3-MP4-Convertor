@@ -9,6 +9,8 @@ using TagLib;
 using Youtube_Videos_Herrunterladen;
 using Youtube_Videos_Herrunterladen.Properties;
 using YoutubeExplode;
+using YoutubeExplode.Videos;
+using YoutubeExplode.Videos.Streams;
 
 namespace downloader
 {
@@ -41,18 +43,26 @@ namespace downloader
             showInfoFormBt.UseVisualStyleBackColor = false;  // Ensure the Button is always transparent
 
             linkBox.TextChanged += LinkBox_TextChanged;  // Register the text changed event handler for the linkBox control
+            mp4QualityComboBox.TextChanged += ComboBox_TextChanged;
 
             UsbManager usbManager = new UsbManager(this, usbSticksPanel, subLb1, selectedFolderPath);  // Instantiate UsbManager to manage USB devices
             timer.Tick += new EventHandler(usbManager.UpdateUsbLabels);  // Register the Tick event to update the USB labels
             timer.Start();  // Start the timer
-
             subLb1.Text = "Speicherort: " + selectedFolderPath;  // Set the initial text of subLb1 to the selected folder path
         }
 
         // Instantiate StatsUpdater to manage YouTube video stats
         private async void LinkBox_TextChanged(object sender, EventArgs e)
         {
-            StatsUpdater statsUpdater = new StatsUpdater(linkBox, titelLb, durationLb, mp4SizeLb, mp3SizeLb, mp4QualityLb, thumbnailPicBox, chanelLb, idLb, uploadDateLb);
+            mp4QualityComboBox.Items.Clear();
+            StatsUpdater statsUpdater = new StatsUpdater(this, linkBox, titelLb, durationLb, mp4SizeLb, mp3SizeLb, mp4QualityLb, thumbnailPicBox, chanelLb, idLb, uploadDateLb, mp4QualityComboBox);
+            await statsUpdater.UpdateVideoStatsAsync();  // Asynchronously update the video stats
+        }
+
+        private async void ComboBox_TextChanged(object sender, EventArgs e)
+        {
+            //VideoQualityUpdater videoQualityUpdater = new VideoQualityUpdater();
+            StatsUpdater statsUpdater = new StatsUpdater(this, linkBox, titelLb, durationLb, mp4SizeLb, mp3SizeLb, mp4QualityLb, thumbnailPicBox, chanelLb, idLb, uploadDateLb, mp4QualityComboBox);
             await statsUpdater.UpdateVideoStatsAsync();  // Asynchronously update the video stats
         }
 
@@ -72,7 +82,7 @@ namespace downloader
         private async void DownloadMp4Bt_Click(object sender, EventArgs e)
         {
             ToggleControls(false);
-            VideoDownloader VideoDownloader = new VideoDownloader(this, linkBox, currentSizeLb, progressBar, selectedFolderPath, tempFolderPath, historyBox);  // Instantiate VideoDownloader to download video from YouTube
+            VideoDownloader VideoDownloader = new VideoDownloader(this, linkBox, currentSizeLb, progressBar, selectedFolderPath, tempFolderPath, historyBox, mp4QualityComboBox);  // Instantiate VideoDownloader to download video from YouTube
             await VideoDownloader.DownloadVideoAsync();  // Asynchronously download the video file
             linkBox.Text = "";
             ToggleControls(true);
@@ -201,6 +211,29 @@ namespace downloader
             }
         }
 
+        // Method to the Infos like titel, size etc. from the video with the selected video quality
+        public IStreamInfo GetMp4VideoSize(StreamManifest streamManifest)
+        {
+            string cleanedValue;
+
+            if (mp4QualityComboBox.SelectedItem == null) // Sets 144p to the default quality when there is no quality selecet. aka at the first link
+            {
+                cleanedValue = "144";
+            }
+            else
+            {
+                string selectedValue = mp4QualityComboBox.Text;
+                int index = selectedValue.IndexOf('p');
+                cleanedValue = selectedValue.Substring(0, index);
+            }
+
+            var videoStreamInfo = streamManifest.GetVideoStreams()
+                .Where(s => s.VideoResolution.Height == Convert.ToInt32(cleanedValue))
+                .OrderByDescending(s => s.Bitrate)
+                .FirstOrDefault();
+
+            return videoStreamInfo;
+        }
 
         // This method handles the click event for the showInfoFormBt Button
         // It shows the infoForm as a separate window

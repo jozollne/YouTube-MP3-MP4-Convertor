@@ -5,12 +5,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using YoutubeExplode.Videos.Streams;
+using static System.Net.WebRequestMethods;
 
 namespace downloader
 {
     internal class StatsUpdater
     {
-        Main main = new Main();
+        private Main main;
         private TextBox linkBox;
         private Label titleLb;
         private Label durationLb;
@@ -21,8 +22,9 @@ namespace downloader
         private Label channelLb;
         private Label idLb;
         private Label uploadDateLb;
+        private ComboBox mp4QualityComboBox;
 
-        public StatsUpdater(TextBox linkBox, Label titleLb, Label durationLb, Label mp4SizeLb, Label mp3SizeLb, Label mp4QualityLB, PictureBox thumbnailPicBox, Label channelLb, Label idLb, Label uploadDateLb)
+        public StatsUpdater(Main main, TextBox linkBox, Label titleLb, Label durationLb, Label mp4SizeLb, Label mp3SizeLb, Label mp4QualityLB, PictureBox thumbnailPicBox, Label channelLb, Label idLb, Label uploadDateLb, ComboBox mp4QualityComboBox)
         {
             this.linkBox = linkBox;
             this.titleLb = titleLb;
@@ -34,6 +36,8 @@ namespace downloader
             this.channelLb = channelLb;
             this.idLb = idLb;
             this.uploadDateLb = uploadDateLb;
+            this.mp4QualityComboBox = mp4QualityComboBox;
+            this.main = main;
         }
 
         // Asynchronous method to update the video statistics
@@ -58,32 +62,19 @@ namespace downloader
                     // Getting stream information for video and audio
                     var streamManifest = await main.youtube.Videos.Streams.GetManifestAsync(videoId);
                     var videoStreamInfo = streamManifest.GetVideoOnlyStreams().GetWithHighestVideoQuality();
-                    var audioStreamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
+                    IStreamInfo videoStreamInfoForSize = main.GetMp4VideoSize(streamManifest);
 
-                    if (videoStreamInfo != null && audioStreamInfo != null)
+                    var uniqueStreamInfos = streamManifest.GetVideoOnlyStreams()
+                        .GroupBy(s => s.VideoQuality)
+                        .Select(g => g.First())
+                        .OrderByDescending(s => s.VideoQuality);
+
+                    // Display the avalible Video streams in the ComboBox
+                    foreach (var streamInfo in uniqueStreamInfos)
                     {
-                        // Calculating the size of video and audio streams in bytes and converting to a readable format
-                        long totalVideoBytes = videoStreamInfo.Size.Bytes;
-                        string totalVideoSize = main.FormatBytes(totalVideoBytes);
-
-                        long totalAudioBytes = audioStreamInfo.Size.Bytes;
-                        string totalAudioSize = main.FormatBytes(totalAudioBytes);
-
-                        // Updating the corresponding Labels in the main window with the video information
-                        titleLb.Text = "Title: \"" + video.Title + "\"";
-                        idLb.Text = $"ID: {video.Id}";
-                        channelLb.Text = $"Channel: {video.Author}";
-                        DateTimeOffset uploadDateOffset = video.UploadDate;
-                        DateTime uploadDate = uploadDateOffset.DateTime;
-                        string uploadDateString = uploadDate.ToShortDateString();
-                        uploadDateLb.Text = $"Uploaded: {uploadDateString}";
-                        durationLb.Text = $"Duration: {video.Duration}";
-                        mp4SizeLb.Text = $".mp4 Size: {totalVideoSize}";
-                        mp3SizeLb.Text = $".mp3 Size: {totalAudioSize}";
-
-                        // Display the video quality in the right format
-                        string qualityLabel = Convert.ToString(videoStreamInfo.VideoQuality);
                         string qualityDescriptor = "";
+                        string qualityLabel = Convert.ToString(streamInfo.VideoQuality);
+
                         if (qualityLabel.Contains("4320"))
                         {
                             qualityDescriptor = "8K";
@@ -92,16 +83,63 @@ namespace downloader
                         {
                             qualityDescriptor = "4K";
                         }
+                        else if (qualityLabel.Contains("1440"))
+                        {
+                            qualityDescriptor = "2K/QHD";
+                        }
                         else if (qualityLabel.Contains("1080"))
+                        {
+                            qualityDescriptor = "Full-HD";
+                        }
+                        else if (qualityLabel.Contains("720"))
                         {
                             qualityDescriptor = "HD";
                         }
-                        else
+                        else if (qualityLabel.Contains("480"))
                         {
                             qualityDescriptor = "SD";
                         }
+                        else if (qualityLabel.Contains("360"))
+                        {
+                            qualityDescriptor = "nHD";
+                        }
+                        else if (qualityLabel.Contains("240"))
+                        {
+                            qualityDescriptor = "FQVGA";
+                        }
+                        else if (qualityLabel.Contains("144"))
+                        {
+                            qualityDescriptor = "Low";
+                        }
+                        if (!mp4QualityComboBox.Items.Contains($"{qualityLabel} ({qualityDescriptor})")) // Check if the5 video quality entry exists. If so dont add a new entry
+                            mp4QualityComboBox.Items.Add($"{qualityLabel} ({qualityDescriptor})");
+                        if (mp4QualityComboBox.SelectedIndex == -1)
+                            mp4QualityComboBox.SelectedItem = "144p (Low)";  // Sets Low as default quality
+                    }
 
-                        mp4QualityLB.Text = $".mp4 Quality: {qualityLabel} ({qualityDescriptor})";
+
+                    var audioStreamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
+
+                    if (videoStreamInfo != null && audioStreamInfo != null)
+                    {
+                        // Calculating the size of video and audio streams in bytes and converting to a readable format
+                        long totalVideoBytes = videoStreamInfoForSize.Size.Bytes;
+                        string totalVideoSize = main.FormatBytes(totalVideoBytes);
+
+                        long totalAudioBytes = audioStreamInfo.Size.Bytes;
+                        string totalAudioSize = main.FormatBytes(totalAudioBytes);
+
+                        // Updating the corresponding Labels in the main window with the video information
+                        titleLb.Text = "Titel: \"" + video.Title + "\"";
+                        idLb.Text = "ID: " + video.Id;
+                        channelLb.Text = $"Kanal: {video.Author}";
+                        DateTimeOffset uploadDateOffset = video.UploadDate;
+                        DateTime uploadDate = uploadDateOffset.DateTime;
+                        string uploadDateString = uploadDate.ToShortDateString();
+                        uploadDateLb.Text = $"Hochgeladen: {uploadDateString}";
+                        durationLb.Text = $"Dauer: {video.Duration}";
+                        mp4SizeLb.Text = $".mp4 Größe: {totalVideoSize}";
+                        mp3SizeLb.Text = $".mp3 Größe: {totalAudioSize}";
 
                         // Get the thumbnail
                         try
@@ -147,22 +185,21 @@ namespace downloader
                 // Clear evrythig when the link is empty
                 currentVideoId = null;
                 videoUrl = null;
-                titleLb.Text = "Title: No link";
-                idLb.Text = "ID: No link";
-                channelLb.Text = "Channel: No link";
-                uploadDateLb.Text = "Uploaded: No link";
-                durationLb.Text = "Duration: 00:00:00";
-                mp4SizeLb.Text = ".mp4 Size: 0 MB";
-                mp3SizeLb.Text = ".mp3 Size: 0 MB";
-                mp4QualityLB.Text = ".mp4 Quality: No link";
-                thumbnailPicBox.Image = null; 
+                titleLb.Text = "Titel: Kein Link";
+                idLb.Text = "ID: Kein Link";
+                channelLb.Text = "Kanal: Kein Link";
+                uploadDateLb.Text = "Hochgeladen: Kein Link";
+                durationLb.Text = "Dauer: 00:00:00";
+                mp4SizeLb.Text = ".mp4 Größe: 0 MB";
+                mp3SizeLb.Text = ".mp3 Größe: 0 MB";
+                thumbnailPicBox.Image = null;
             }
 
         }
 
         void PictureError()
         {
-            string errorLoadingPicture = "The image could not be loaded!"; // Declare a variable or a string
+            string errorLoadingPicture = "Das Thumbnail konte nicht geladen werden!"; // Declare a variable or a string
 
             Bitmap picture = new Bitmap(thumbnailPicBox.Width, thumbnailPicBox.Height); // Create a Bitmap image object
 

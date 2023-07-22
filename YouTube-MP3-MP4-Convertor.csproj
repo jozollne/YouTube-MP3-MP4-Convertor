@@ -117,6 +117,7 @@
     <Compile Include="UsbManager.cs" />
     <Compile Include="VideoDownloader.cs" />
     <Compile Include="StatsUpdater.cs" />
+    <Compile Include="VideoQualityUpdater.cs" />
     <EmbeddedResource Include="InfoForm.resx">
       <DependentUpon>InfoForm.cs</DependentUpon>
     </EmbeddedResource>

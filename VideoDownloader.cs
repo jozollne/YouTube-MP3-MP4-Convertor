@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using YoutubeExplode.Videos.Streams;
@@ -16,8 +17,9 @@ namespace downloader
         private string selectedFolderPath;
         private string tempFolderPath;
         private TextBox historyBox;
+        private ComboBox mp4QualityComboBox;
 
-        public VideoDownloader(Main main, TextBox linkBox, Label currentSizeLb, ProgressBar progressBar, string selectedFolderPath, string tempFolderPath, TextBox historyBox)
+        public VideoDownloader(Main main, TextBox linkBox, Label currentSizeLb, ProgressBar progressBar, string selectedFolderPath, string tempFolderPath, TextBox historyBox, ComboBox mp4QualityComboBox)
         {
             this.linkBox = linkBox;
             this.currentSizeLb = currentSizeLb;
@@ -26,6 +28,7 @@ namespace downloader
             this.tempFolderPath = tempFolderPath;
             this.historyBox = historyBox;
             this.main = main;
+            this.mp4QualityComboBox = mp4QualityComboBox;
         }
 
         // Method to download video asynchronously
@@ -42,7 +45,7 @@ namespace downloader
 
                 main.infoForm.infoBox.AppendText("Stream-Informationen werden abgerufen...\r\n");
                 var streamManifest = await main.youtube.Videos.Streams.GetManifestAsync(videoId);  // Get the video stream manifest from YouTube
-                var videoStreamInfo = streamManifest.GetVideoStreams().GetWithHighestVideoQuality();  // Get the video stream info with the highest video quality
+                IStreamInfo videoStreamInfo = main.GetMp4VideoSize(streamManifest);
                 var audioStreamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();  // Get the audio stream info with the highest bitrate
 
                 if (videoStreamInfo != null && audioStreamInfo != null)  // Check if both video and audio stream info are not null
@@ -57,8 +60,8 @@ namespace downloader
                     string audioSize = main.FormatBytes(audioBytes);  // Convert the audio size to a human-readable format
                     string totalSize = main.FormatBytes(totalBytes);  // Convert the total size to a human-readable format
 
-                    string videoTitle = video.Title;  // Get the video title
-                    historyBox.Text += video.Title + ".mp4";  // Append the video title to the history box
+                    string videoTitle = video.Title + " " + mp4QualityComboBox.Text;  // Get the video title
+                    historyBox.Text += video.Title + " " + mp4QualityComboBox.Text + ".mp4";  // Append the video title to the history box
 
                     foreach (char c in Path.GetInvalidFileNameChars())  // Replace invalid characters in the video title with '_'
                     {
@@ -76,13 +79,13 @@ namespace downloader
 
 
                     // Download the video stream asynchronously and update the progress for video download
-                    main.infoForm.infoBox.AppendText("Video-Download startet...\r\n");
+                    main.infoForm.infoBox.AppendText("Video-Download gestartet...\r\n");
                     var videoProgress = new Progress<double>(p => UpdateProgress(p, totalSize, totalBytes, true));
                     await main.youtube.Videos.Streams.DownloadAsync(videoStreamInfo, tempVideoFilePath, progress: videoProgress);
                     main.infoForm.infoBox.AppendText("Video-Download erfolgreich...\r\n");
 
                     // Download the audio stream asynchronously and update the progress for audio download
-                    main.infoForm.infoBox.AppendText("Audio-Download startet...\r\n");
+                    main.infoForm.infoBox.AppendText("Audio-Download gestartet...\r\n");
                     var audioProgress = new Progress<double>(p => UpdateProgress(p, totalSize, totalBytes, false));
                     await main.youtube.Videos.Streams.DownloadAsync(audioStreamInfo, rawAudioFilePath, progress: audioProgress);
                     main.infoForm.infoBox.AppendText("Audio-Download erfolgreich...\r\n");
