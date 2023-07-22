@@ -1,4 +1,4 @@
-﻿namespace downloader
+﻿namespace Youtube_Videos_Herrunterladen
 {
     partial class Main
     {
@@ -37,7 +37,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.mp4SizeLb = new System.Windows.Forms.Label();
             this.currentSizeLb = new System.Windows.Forms.Label();
-            this.titelLb = new System.Windows.Forms.Label();
+            this.titleLb = new System.Windows.Forms.Label();
             this.durationLb = new System.Windows.Forms.Label();
             this.usbSticksPanel = new System.Windows.Forms.Panel();
             this.subLb2 = new System.Windows.Forms.Label();
@@ -47,7 +47,7 @@
             this.mp4QualityLb = new System.Windows.Forms.Label();
             this.thumbnailLb = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.chanelLb = new System.Windows.Forms.Label();
+            this.channelLb = new System.Windows.Forms.Label();
             this.idLb = new System.Windows.Forms.Label();
             this.uploadDateLb = new System.Windows.Forms.Label();
             this.historyBox = new System.Windows.Forms.TextBox();
@@ -135,14 +135,14 @@
             this.currentSizeLb.TabIndex = 8;
             this.currentSizeLb.Text = "Herruntergeladen: 0 MB / Größe: 0 MB | Gesamtfortschritt: 0%";
             // 
-            // titelLb
+            // titleLb
             // 
-            this.titelLb.AutoSize = true;
-            this.titelLb.Location = new System.Drawing.Point(20, 191);
-            this.titelLb.Name = "titelLb";
-            this.titelLb.Size = new System.Drawing.Size(137, 26);
-            this.titelLb.TabIndex = 9;
-            this.titelLb.Text = "Titel: Kein Link";
+            this.titleLb.AutoSize = true;
+            this.titleLb.Location = new System.Drawing.Point(20, 191);
+            this.titleLb.Name = "titleLb";
+            this.titleLb.Size = new System.Drawing.Size(137, 26);
+            this.titleLb.TabIndex = 9;
+            this.titleLb.Text = "Titel: Kein Link";
             // 
             // durationLb
             // 
@@ -178,7 +178,7 @@
             this.selectFolderButton.TabIndex = 1;
             this.selectFolderButton.Text = "Speicherort ändern";
             this.selectFolderButton.UseVisualStyleBackColor = true;
-            this.selectFolderButton.Click += new System.EventHandler(this.selectFolderButton_Click);
+            this.selectFolderButton.Click += new System.EventHandler(this.SelectFolderButton_Click);
             // 
             // downloadMp3Bt
             // 
@@ -229,14 +229,14 @@
             this.label2.TabIndex = 20;
             this.label2.Text = "Verlauf:";
             // 
-            // chanelLb
+            // channelLb
             // 
-            this.chanelLb.AutoSize = true;
-            this.chanelLb.Location = new System.Drawing.Point(20, 243);
-            this.chanelLb.Name = "chanelLb";
-            this.chanelLb.Size = new System.Drawing.Size(147, 26);
-            this.chanelLb.TabIndex = 22;
-            this.chanelLb.Text = "Kanal: Kein Link";
+            this.channelLb.AutoSize = true;
+            this.channelLb.Location = new System.Drawing.Point(20, 243);
+            this.channelLb.Name = "channelLb";
+            this.channelLb.Size = new System.Drawing.Size(147, 26);
+            this.channelLb.TabIndex = 22;
+            this.channelLb.Text = "Kanal: Kein Link";
             // 
             // idLb
             // 
@@ -274,7 +274,7 @@
             this.showInfoFormBt.Size = new System.Drawing.Size(31, 31);
             this.showInfoFormBt.TabIndex = 25;
             this.showInfoFormBt.UseVisualStyleBackColor = true;
-            this.showInfoFormBt.Click += new System.EventHandler(this.showInfoFormBt_Click);
+            this.showInfoFormBt.Click += new System.EventHandler(this.ShowInfoFormBt_Click);
             // 
             // thumbnailPicBox
             // 
@@ -306,7 +306,7 @@
             this.Controls.Add(this.showInfoFormBt);
             this.Controls.Add(this.uploadDateLb);
             this.Controls.Add(this.idLb);
-            this.Controls.Add(this.chanelLb);
+            this.Controls.Add(this.channelLb);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.thumbnailLb);
             this.Controls.Add(this.mp4QualityLb);
@@ -316,7 +316,7 @@
             this.Controls.Add(this.subLb2);
             this.Controls.Add(this.usbSticksPanel);
             this.Controls.Add(this.durationLb);
-            this.Controls.Add(this.titelLb);
+            this.Controls.Add(this.titleLb);
             this.Controls.Add(this.currentSizeLb);
             this.Controls.Add(this.mp4SizeLb);
             this.Controls.Add(this.label1);
@@ -339,6 +339,7 @@
 
         #endregion
 
+        private System.Windows.Forms.ComboBox mp4QualityComboBox;
         private System.Windows.Forms.TextBox linkBox;
         private System.Windows.Forms.Button downloadMp4Bt;
         private System.Windows.Forms.Label subLb1;
@@ -347,7 +348,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label mp4SizeLb;
         private System.Windows.Forms.Label currentSizeLb;
-        private System.Windows.Forms.Label titelLb;
+        private System.Windows.Forms.Label titleLb;
         private System.Windows.Forms.Label durationLb;
         private System.Windows.Forms.Panel usbSticksPanel;
         private System.Windows.Forms.Label subLb2;
@@ -358,12 +359,11 @@
         private System.Windows.Forms.PictureBox thumbnailPicBox;
         private System.Windows.Forms.Label thumbnailLb;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label chanelLb;
+        private System.Windows.Forms.Label channelLb;
         private System.Windows.Forms.Label idLb;
         private System.Windows.Forms.Label uploadDateLb;
         private System.Windows.Forms.Button showInfoFormBt;
         private System.Windows.Forms.TextBox historyBox;
-        private System.Windows.Forms.ComboBox mp4QualityComboBox;
     }
 }
 

@@ -7,39 +7,30 @@ using System.Windows.Forms;
 using YoutubeExplode.Videos.Streams;
 using static System.Net.WebRequestMethods;
 
-namespace downloader
+namespace Youtube_Videos_Herrunterladen
 {
     internal class VideoAndAudioSizeUpdater
     {
-        private Main main;
-        private ComboBox mp4QualityComboBox;
-        private Label mp4SizeLb;
-        private Label mp3SizeLb;
-        private TextBox linkBox;
+        private readonly Main main;
+        private readonly ComboBox mp4QualityComboBox;
+        private readonly Label mp4SizeLb;
+        private readonly Label mp3SizeLb;
+        private readonly Utilityclass utilityclass;
 
-        public VideoAndAudioSizeUpdater(Main main, ComboBox mp4QualityComboBox, Label mp4SizeLb, Label mp3SizeLb, TextBox linkBox)
+        public VideoAndAudioSizeUpdater(Utilityclass utilityclass, Main main,ComboBox mp4QualityComboBox, Label mp4SizeLb, Label mp3SizeLb)
         {
-            this.main = main;
             this.mp4QualityComboBox = mp4QualityComboBox;
             this.mp4SizeLb = mp4SizeLb;
             this.mp3SizeLb = mp3SizeLb;
-            this.linkBox = linkBox;
+            this.main = main;
+            this.utilityclass = utilityclass;
         }
 
-        public async Task UpdateVideoAndAudioSize()
+        public void UpdateVideoAndAudioSize()
         {
             try
             {
-                // Getting video information using the YoutubeExplode library
-                var videoUrl = linkBox.Text;
-                var uri = new Uri(videoUrl);
-                var videoId = uri.Query.TrimStart('?').Split('&')[0].Substring(2);
-                var video = await main.youtube.Videos.GetAsync(videoId);
-                var streamManifest = await main.youtube.Videos.Streams.GetManifestAsync(videoId);
-                var audioStreamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
-                IStreamInfo videoStreamInfo = main.GetMp4VideoSize(streamManifest);
-
-                var uniqueVideoStreamInfo = streamManifest.GetVideoOnlyStreams()
+                var uniqueVideoStreamInfo = main.streamManifest.GetVideoOnlyStreams()
                     .GroupBy(s => s.VideoQuality)
                     .Select(g => g.First())
                     .OrderByDescending(s => s.VideoQuality);
@@ -93,18 +84,17 @@ namespace downloader
                 }
 
                 // Display the Video and Audio size to the label
-                long totalAudioBytes = audioStreamInfo.Size.Bytes;
-                string totalAudioSize = main.FormatBytes(totalAudioBytes);
+                long totalAudioBytes = main.audioStreamInfo.Size.Bytes;
+                string totalAudioSize = utilityclass.FormatBytes(totalAudioBytes);
                 
-                long totalVideoBytes = videoStreamInfo.Size.Bytes;
-                string totalVideoSize = main.FormatBytes(totalVideoBytes);
+                long totalVideoBytes = main.videoStreamInfo.Size.Bytes;
+                string totalVideoSize = utilityclass.FormatBytes(totalVideoBytes);
                 mp4SizeLb.Text = $".mp4 Größe: {totalVideoSize}";
                 mp3SizeLb.Text = $".mp3 Größe: {totalAudioSize}";
             }
             catch
             {
-                mp4SizeLb.Text = $".mp4 Größe: 0 MB";
-                mp3SizeLb.Text = $".mp3 Größe: 0 MB";
+
             }
         }
     }

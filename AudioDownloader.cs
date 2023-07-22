@@ -5,28 +5,28 @@ using System.Windows.Forms;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 
-namespace downloader
+namespace Youtube_Videos_Herrunterladen
 {
     internal class AudioDownloader
     {
-        private TextBox linkBox; 
-        private Label currentSizeLb; 
-        private ProgressBar progressBar; 
-        private string selectedFolderPath; 
-        private string tempFolderPath;
-        private TextBox historyBox;
-        private Main main;  
+        private readonly Label currentSizeLb; 
+        private readonly ProgressBar progressBar; 
+        private readonly string selectedFolderPath; 
+        private readonly string tempFolderPath;
+        private readonly TextBox historyBox;
+        private readonly Main main;
+        private readonly Utilityclass utilityclass;
 
 
-        public AudioDownloader(Main main, TextBox linkBox, string selectedFolderPath, Label currentSizeLb, ProgressBar progressBar, TextBox historyBox, string tempFolderPath)
+        public AudioDownloader(Utilityclass utilityclass, Main main, string selectedFolderPath, Label currentSizeLb, ProgressBar progressBar, TextBox historyBox, string tempFolderPath)
         {
-            this.main = main; 
-            this.linkBox = linkBox;
             this.selectedFolderPath = selectedFolderPath;  
             this.currentSizeLb = currentSizeLb; 
             this.progressBar = progressBar; 
             this.historyBox = historyBox;
             this.tempFolderPath = tempFolderPath;
+            this.main = main;
+            this.utilityclass = utilityclass;
         }
 
         // Method to download audio asynchronously
@@ -34,26 +34,18 @@ namespace downloader
         {
             try
             {
-                var videoURL = linkBox.Text;  // Get the video URL from the TextBox
-                var uri = new Uri(videoURL);  // Parse the video URL into a Uri object
-                var audioId = uri.Query.TrimStart('?').Split('&')[0].Substring(2);  // Extract the audio ID from the query string of the URL
-
-                main.infoForm.infoBox.Text = $"Download von Audio mit ID {audioId} wird gestartet...\r\n";
-
+                main.infoForm.infoBox.Text = $"Download von Audio mit ID {main.streamId} wird gestartet...\r\n";
                 main.infoForm.infoBox.AppendText("Stream-Informationen werden abgerufen...\r\n");
-                var audio = await main.youtube.Videos.GetAsync(audioId);  // Get the audio information from YouTube
-                var audioStreamManifest = await main.youtube.Videos.Streams.GetManifestAsync(audioId);  // Get the audio stream manifest from YouTube
-                var audioStreamInfo = audioStreamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();  // Get the audio stream info with the highest bitrate
 
-                if (audioStreamInfo != null)  // Check if the audio stream info is not null
+                if (main.audioStreamInfo != null)  // Check if the audio stream info is not null
                 {
                     main.infoForm.infoBox.AppendText("Stream-Informationen erfolgreich abgerufen...\r\n");
 
-                    long audioBytes = audioStreamInfo.Size.Bytes;  // Get the total size of the audio stream in bytes
-                    string audioSize = main.FormatBytes(audioBytes);  // Convert the audio size to a human-readable format
-                    string audioTitle = audio.Title;  // save video title
+                    long audioBytes = main.audioStreamInfo.Size.Bytes;  // Get the total size of the audio stream in bytes
+                    string audioSize = utilityclass.FormatBytes(audioBytes);  // Convert the audio size to a human-readable format
+                    string audioTitle = main.stream.Title;  // save video title
 
-                    historyBox.Text += audio.Title + ".mp3";
+                    historyBox.Text += main.stream.Title + ".mp3";
 
                     foreach (char c in Path.GetInvalidFileNameChars()) // Read an save evry char in "c"
                     {
@@ -67,16 +59,16 @@ namespace downloader
 
                     main.infoForm.infoBox.AppendText("Audio-Download gestartet...\r\n");
                     var audioProgress = new Progress<double>(p => UpdateProgress(p, audioSize, audioBytes));  // Create a progress object for the audio
-                    await main.youtube.Videos.Streams.DownloadAsync(audioStreamInfo, rawAudioFilePath, progress: audioProgress);  // Download the audio stream asynchronously and update the progress
+                    await main.youtube.Videos.Streams.DownloadAsync(main.audioStreamInfo, rawAudioFilePath, progress: audioProgress);  // Download the audio stream asynchronously and update the progress
                     main.infoForm.infoBox.AppendText("Audio-Download erfolgreich...\r\n");
 
                     // Convert the raw audio file to a final audio file
                     main.infoForm.infoBox.AppendText("Das Format des Audiostreams wird gesucht" + Environment.NewLine);
-                    main.GetMp3FormatAndConvert(rawAudioFilePath, finalAudioFilePath);
+                    utilityclass.GetMp3FormatAndConvert(rawAudioFilePath, finalAudioFilePath);
 
                     // Set the metadata for the audio file
                     main.infoForm.infoBox.AppendText("Metadaten werden gesetzt" + Environment.NewLine);
-                    SetMetaData(finalAudioFilePath, audio);
+                    SetMetaData(finalAudioFilePath, main.stream);
                     main.infoForm.infoBox.AppendText("Metadaten gesetzt" + Environment.NewLine);
 
                     File.Delete(rawAudioFilePath);
@@ -105,7 +97,7 @@ namespace downloader
         {
             double currentProgress = progress;  // Calculate the current progress
             long currentSize = (long)(audioBytes * currentProgress);  // Calculate the current size based on the progress
-            string text = $"Herruntergeladen: {main.FormatBytes(currentSize)} / Größe: {audioSize} | Gesamtfortschritt: {currentProgress * 100:n2}%";  // Format the progress into a text format
+            string text = $"Herruntergeladen: {utilityclass.FormatBytes(currentSize)} / Größe: {audioSize} | Gesamtfortschritt: {currentProgress * 100:n2}%";  // Format the progress into a text format
 
             if (currentSizeLb.InvokeRequired)  // Check if access to the UI element is required
             {
@@ -126,7 +118,7 @@ namespace downloader
 
             // Set metadata
             tagFile.Tag.Title = audio.Title;
-            tagFile.Tag.Performers = new[] { $"{audio.Author.ToString()}" };
+            tagFile.Tag.Performers = new[] { $"{audio.Author}" };
             tagFile.Tag.Year = (uint)audio.UploadDate.Year;
 
             tagFile.Save();  // Save changes

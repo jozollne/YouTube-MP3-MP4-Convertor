@@ -7,37 +7,35 @@ using System.Windows.Forms;
 using YoutubeExplode.Videos.Streams;
 using static System.Net.WebRequestMethods;
 
-namespace downloader
+namespace Youtube_Videos_Herrunterladen
 {
     internal class StatsUpdater
     {
-        private Main main;
-        private TextBox linkBox;
-        private Label titleLb;
-        private Label durationLb;
-        private Label mp4SizeLb;
-        private Label mp3SizeLb;
-        private Label mp4QualityLB;
-        private PictureBox thumbnailPicBox; 
-        private Label channelLb;
-        private Label idLb;
-        private Label uploadDateLb;
-        private ComboBox mp4QualityComboBox;
+        private readonly Utilityclass utilityclass;
+        private readonly Main main;
+        private readonly Label titleLb;
+        private readonly Label durationLb;
+        private readonly Label mp4SizeLb;
+        private readonly Label mp3SizeLb;
+        private readonly PictureBox thumbnailPicBox; 
+        private readonly Label channelLb;
+        private readonly Label idLb;
+        private readonly Label uploadDateLb;
+        private readonly ComboBox mp4QualityComboBox;
 
-        public StatsUpdater(Main main, TextBox linkBox, Label titleLb, Label durationLb, Label mp4SizeLb, Label mp3SizeLb, Label mp4QualityLB, PictureBox thumbnailPicBox, Label channelLb, Label idLb, Label uploadDateLb, ComboBox mp4QualityComboBox)
+        public StatsUpdater(Utilityclass utilityclass, Main main, Label titleLb, Label durationLb, Label mp4SizeLb, Label mp3SizeLb, PictureBox thumbnailPicBox, Label channelLb, Label idLb, Label uploadDateLb, ComboBox mp4QualityComboBox)
         {
-            this.linkBox = linkBox;
             this.titleLb = titleLb;
             this.durationLb = durationLb;
             this.mp4SizeLb = mp4SizeLb;
             this.mp3SizeLb = mp3SizeLb;
-            this.mp4QualityLB = mp4QualityLB;
             this.thumbnailPicBox = thumbnailPicBox;
             this.channelLb = channelLb;
             this.idLb = idLb;
             this.uploadDateLb = uploadDateLb;
             this.mp4QualityComboBox = mp4QualityComboBox;
             this.main = main;
+            this.utilityclass = utilityclass;
         }
 
         // Asynchronous method to update the video statistics
@@ -47,34 +45,24 @@ namespace downloader
 
             try
             {
-                // Getting video information using the YoutubeExplode library
-                var videoUrl = linkBox.Text;
-                var uri = new Uri(videoUrl);
-                var videoId = uri.Query.TrimStart('?').Split('&')[0].Substring(2);
-                var video = await main.youtube.Videos.GetAsync(videoId);
-                var streamManifest = await main.youtube.Videos.Streams.GetManifestAsync(videoId);
-                var videoStreamInfo = streamManifest.GetVideoOnlyStreams().GetWithHighestVideoQuality();
-                var audioStreamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
-                IStreamInfo videoStreamInfoForSize = main.GetMp4VideoSize(streamManifest);
-
-                VideoAndAudioSizeUpdater videoAndAudioSizeUpdater = new VideoAndAudioSizeUpdater(main, mp4QualityComboBox, mp4SizeLb, mp3SizeLb, linkBox);
-                await videoAndAudioSizeUpdater.UpdateVideoAndAudioSize();
+                VideoAndAudioSizeUpdater videoAndAudioSizeUpdater = new VideoAndAudioSizeUpdater(utilityclass, main, mp4QualityComboBox, mp4SizeLb, mp3SizeLb);
+                videoAndAudioSizeUpdater.UpdateVideoAndAudioSize();
 
                 // Updating the corresponding Labels in the main window with the video information
-                titleLb.Text = "Titel: \"" + video.Title + "\"";
-                idLb.Text = "ID: " + video.Id;
-                channelLb.Text = $"Kanal: {video.Author}";
-                DateTimeOffset uploadDateOffset = video.UploadDate;
+                titleLb.Text = "Titel: \"" + main.stream.Title + "\"";
+                idLb.Text = "ID: " + main.stream.Id;
+                channelLb.Text = $"Kanal: {main.stream.Author}";
+                DateTimeOffset uploadDateOffset = main.stream.UploadDate;
                 DateTime uploadDate = uploadDateOffset.DateTime;
                 string uploadDateString = uploadDate.ToShortDateString();
                 uploadDateLb.Text = $"Hochgeladen: {uploadDateString}";
-                durationLb.Text = $"Dauer: {video.Duration}";
+                durationLb.Text = $"Dauer: {main.stream.Duration}";
 
 
                 // Get the thumbnail
                 try
                 {
-                    var thumbnail = video.Thumbnails.OrderByDescending(t => t.Resolution.Width * t.Resolution.Height).FirstOrDefault();  // Get the highest resolution thumbnail
+                    var thumbnail = main.stream.Thumbnails.OrderByDescending(t => t.Resolution.Width * t.Resolution.Height).FirstOrDefault();  // Get the highest resolution thumbnail
 
                     if (thumbnail != null)
                     {
@@ -112,15 +100,7 @@ namespace downloader
             }
             catch
             {
-                // Clear evrythig when the link is empty
-                titleLb.Text = "Titel: Kein Link";
-                idLb.Text = "ID: Kein Link";
-                channelLb.Text = "Kanal: Kein Link";
-                uploadDateLb.Text = "Hochgeladen: Kein Link";
-                durationLb.Text = "Dauer: 00:00:00";
-                mp4SizeLb.Text = ".mp4 Größe: 0 MB";
-                mp3SizeLb.Text = ".mp3 Größe: 0 MB";
-                thumbnailPicBox.Image = null;
+
             }
 
         }
