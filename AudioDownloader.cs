@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ATL;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -114,14 +115,28 @@ namespace Youtube_Videos_Herrunterladen
         // Method to set metadata for the audio file
         private void SetMetaData(string finalAudioFilePath, Video audio)
         {
-            TagLib.File tagFile = TagLib.File.Create(finalAudioFilePath);  // Create the TagLib.File object
+            Track theTrack = new Track(finalAudioFilePath);
 
             // Set metadata
-            tagFile.Tag.Title = audio.Title;
-            tagFile.Tag.Performers = new[] { $"{audio.Author}" };
-            tagFile.Tag.Year = (uint)audio.UploadDate.Year;
+            theTrack.Title = audio.Title;
+            theTrack.Artist = $"{audio.Author}";
+            theTrack.Year = audio.UploadDate.Year;
 
-            tagFile.Save();  // Save changes
+            // Convert Image to byte[]
+            byte[] byteImage;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                main.image.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                byteImage = ms.ToArray();
+            } // close MemoryStream
+
+            // Neues Coverbild hinzufügen
+            PictureInfo picInfo = PictureInfo.fromBinaryData(byteImage);
+            theTrack.EmbeddedPictures.Add(picInfo);
+
+            // Änderungen speichern
+            theTrack.Save();
         }
+
     }
 }

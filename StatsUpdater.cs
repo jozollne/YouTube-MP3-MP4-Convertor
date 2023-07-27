@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using YoutubeExplode.Common;
+using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 using static System.Net.WebRequestMethods;
 
@@ -57,74 +61,43 @@ namespace Youtube_Videos_Herrunterladen
                 string uploadDateString = uploadDate.ToShortDateString();
                 uploadDateLb.Text = $"Hochgeladen: {uploadDateString}";
                 durationLb.Text = $"Dauer: {main.stream.Duration}";
-
-
-                // Get the thumbnail
                 try
                 {
-                    var thumbnail = main.stream.Thumbnails.OrderByDescending(t => t.Resolution.Width * t.Resolution.Height).FirstOrDefault();  // Get the highest resolution thumbnail
+                    var thumbnails = main.stream.Thumbnails.OrderByDescending(t => t.Resolution.Width * t.Resolution.Height);
 
-                    if (thumbnail != null)
+                    // Get the thumbnail
+                    foreach (var thumbnail in thumbnails)
                     {
-                        string thumbnailUrl = thumbnail.Url;  // Get the thumbnail URL
-
-                        using (var httpClient = new HttpClient())  // Create a new HttpClient for HTTP communications
+                        try
                         {
-                            var thumbnailResponse = await httpClient.GetAsync(thumbnailUrl);  // Send a GET request to the thumbnail URL
-
-                            if (thumbnailResponse.IsSuccessStatusCode)  // Check if the response was successful
+                            using (var client = new WebClient())
                             {
-                                var thumbnailStream = await thumbnailResponse.Content.ReadAsStreamAsync();  // Get the response content as a Stream
+                                var data = await client.DownloadDataTaskAsync(thumbnail.Url);
 
-                                if (thumbnailPicBox.InvokeRequired)  // Check if the PictureBox control's InvokeRequired property is true
+                                using (var mem = new MemoryStream(data))
                                 {
-                                    thumbnailPicBox.Invoke(new MethodInvoker(delegate  // Use the Invoke method to update the PictureBox control
-                                    {
-                                        thumbnailPicBox.Image = Image.FromStream(thumbnailStream);  // Load the thumbnail image from the Stream
-                                    }));
+                                    var tempImage = Image.FromStream(mem);
+                                    // Create a new image from the tempImage
+                                    main.image = new Bitmap(tempImage);
+                                    // Display image in PictureBox
+                                    thumbnailPicBox.Image = main.image;
                                 }
-                                else
-                                {
-                                    thumbnailPicBox.Image = Image.FromStream(thumbnailStream);  // Load the thumbnail image from the Stream
-                                }
+
+                                // If we got here, it means we've successfully downloaded and processed a thumbnail
+                                // So we break the loop and stop trying
+                                break;
                             }
                         }
+                        catch { }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    PictureError();
+                    // Handle any errors that might have occurred
+                    MessageBox.Show($"An error occurred: {ex.Message}");
                 }
-                
-                
             }
-            catch
-            {
-
-            }
-
-        }
-
-        void PictureError()
-        {
-            string errorLoadingPicture = "Das Thumbnail konte nicht geladen werden!"; // Declare a variable or a string
-
-            Bitmap picture = new Bitmap(thumbnailPicBox.Width, thumbnailPicBox.Height); // Create a Bitmap image object
-
-            using (Graphics g = Graphics.FromImage(picture)) // Create a Graphics object from the image
-            {
-                Font textFont = new Font("Calibri", 15); // Define the font and text color
-                Brush textColor = Brushes.Black;
-
-                SizeF textSize = g.MeasureString(errorLoadingPicture.ToString(), textFont); // Measure the size of the text
-
-                float x = (thumbnailPicBox.Width - textSize.Width) / 2; // Calculate the position of the text to center it
-                float y = (thumbnailPicBox.Height - textSize.Height) / 2;
-
-                g.DrawString(errorLoadingPicture, textFont, textColor, new PointF(x, y)); // Draw the string on the image
-            }
-
-            thumbnailPicBox.Image = picture; // Display the image in the PictureBox
+            catch { }
         }
     }
 }

@@ -36,6 +36,9 @@
     <Reference Include="AngleSharp, Version=1.0.2.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
       <HintPath>packages\AngleSharp.1.0.3\lib\net472\AngleSharp.dll</HintPath>
     </Reference>
+    <Reference Include="ATL">
+      <HintPath>..\..\Konsole\AddThumbnailTo.mp3\atldotnet-main\ATL\bin\Debug\net48\ATL.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>

@@ -26,6 +26,7 @@ namespace Youtube_Videos_Herrunterladen
         public StreamManifest streamManifest;
         public IStreamInfo audioStreamInfo;
         public IStreamInfo videoStreamInfo;
+        public Image image;
         readonly System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer() // Create a timer to trigger events at regular intervals
         {
             Interval = 500 // Set the interval of the timer to 500ms (0.5 seconds)
