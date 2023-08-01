@@ -11,18 +11,18 @@ namespace Youtube_Videos_Herrunterladen
 {
     internal class VideoAndAudioSizeUpdater
     {
-        private readonly Main main;
+        private readonly MainForm mainForm;
         private readonly ComboBox mp4QualityComboBox;
         private readonly Label mp4SizeLb;
         private readonly Label mp3SizeLb;
         private readonly Utilityclass utilityclass;
 
-        public VideoAndAudioSizeUpdater(Utilityclass utilityclass, Main main,ComboBox mp4QualityComboBox, Label mp4SizeLb, Label mp3SizeLb)
+        public VideoAndAudioSizeUpdater(Utilityclass utilityclass, MainForm mainForm,ComboBox mp4QualityComboBox, Label mp4SizeLb, Label mp3SizeLb)
         {
             this.mp4QualityComboBox = mp4QualityComboBox;
             this.mp4SizeLb = mp4SizeLb;
             this.mp3SizeLb = mp3SizeLb;
-            this.main = main;
+            this.mainForm = mainForm;
             this.utilityclass = utilityclass;
         }
 
@@ -30,7 +30,7 @@ namespace Youtube_Videos_Herrunterladen
         {
             try
             {
-                var uniqueVideoStreamInfo = main.streamManifest.GetVideoOnlyStreams()
+                var uniqueVideoStreamInfo = mainForm.streamManifest.GetVideoOnlyStreams()
                     .GroupBy(s => s.VideoQuality)
                     .Select(g => g.First())
                     .OrderByDescending(s => s.VideoQuality);
@@ -84,10 +84,10 @@ namespace Youtube_Videos_Herrunterladen
                 }
 
                 // Display the Video and Audio size to the label
-                long totalAudioBytes = main.audioStreamInfo.Size.Bytes;
+                long totalAudioBytes = mainForm.audioStreamInfo.Size.Bytes;
                 string totalAudioSize = utilityclass.FormatBytes(totalAudioBytes);
                 
-                long totalVideoBytes = main.videoStreamInfo.Size.Bytes;
+                long totalVideoBytes = mainForm.videoStreamInfo.Size.Bytes;
                 string totalVideoSize = utilityclass.FormatBytes(totalVideoBytes);
                 mp4SizeLb.Text = $".mp4 Größe: {totalVideoSize}";
                 mp3SizeLb.Text = $".mp3 Größe: {totalAudioSize}";

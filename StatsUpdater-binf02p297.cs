@@ -16,22 +16,24 @@ namespace Youtube_Videos_Herrunterladen
     internal class StatsUpdater
     {
         private readonly Utilityclass utilityclass;
-        private readonly MainForm main;
+        private readonly Main main;
         private readonly Label titleLb;
         private readonly Label durationLb;
         private readonly Label mp4SizeLb;
         private readonly Label mp3SizeLb;
+        private readonly PictureBox thumbnailPicBox; 
         private readonly Label channelLb;
         private readonly Label idLb;
         private readonly Label uploadDateLb;
         private readonly ComboBox mp4QualityComboBox;
 
-        public StatsUpdater(Utilityclass utilityclass, MainForm main, Label titleLb, Label durationLb, Label mp4SizeLb, Label mp3SizeLb, Label channelLb, Label idLb, Label uploadDateLb, ComboBox mp4QualityComboBox)
+        public StatsUpdater(Utilityclass utilityclass, Main main, Label titleLb, Label durationLb, Label mp4SizeLb, Label mp3SizeLb, PictureBox thumbnailPicBox, Label channelLb, Label idLb, Label uploadDateLb, ComboBox mp4QualityComboBox)
         {
             this.titleLb = titleLb;
             this.durationLb = durationLb;
             this.mp4SizeLb = mp4SizeLb;
             this.mp3SizeLb = mp3SizeLb;
+            this.thumbnailPicBox = thumbnailPicBox;
             this.channelLb = channelLb;
             this.idLb = idLb;
             this.uploadDateLb = uploadDateLb;
@@ -78,7 +80,7 @@ namespace Youtube_Videos_Herrunterladen
                                     // Create a new image from the tempImage
                                     main.image = new Bitmap(tempImage);
                                     // Display image in PictureBox
-                                    main.BackgroundImage = main.image;
+                                    thumbnailPicBox.Image = main.image;
                                 }
 
                                 // If we got here, it means we've successfully downloaded and processed a thumbnail

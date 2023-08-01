@@ -100,17 +100,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HistoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HistoryForm.Designer.cs">
+      <DependentUpon>HistoryForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="InfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="InfoForm.Designer.cs">
       <DependentUpon>InfoForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main.cs">
+    <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Main.Designer.cs">
-      <DependentUpon>Main.cs</DependentUpon>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="AudioDownloader.cs" />
     <Compile Include="Program.cs" />
@@ -125,11 +131,14 @@
     <Compile Include="VideoDownloader.cs" />
     <Compile Include="StatsUpdater.cs" />
     <Compile Include="VideoAndAudioSizeUpdater.cs" />
+    <EmbeddedResource Include="HistoryForm.resx">
+      <DependentUpon>HistoryForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="InfoForm.resx">
       <DependentUpon>InfoForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main.resx">
-      <DependentUpon>Main.cs</DependentUpon>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -151,7 +160,22 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\InfoIcon.png" />
+    <None Include="Resources\infoIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\historyIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\defaultBackground.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mainShadow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Pictures\historyShadow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Pictures\mainIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

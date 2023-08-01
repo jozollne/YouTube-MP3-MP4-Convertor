@@ -22,7 +22,7 @@ namespace Youtube_Videos_Herrunterladen
         // Queue to store the last N speeds for smoothing
         private Queue<double> speeds = new Queue<double>();
 
-        private readonly MainForm mainForm;
+        private readonly Main main;
         private readonly Label currentSizeLb;
         private readonly ProgressBar progressBar;
         private readonly string selectedFolderPath;
@@ -31,14 +31,14 @@ namespace Youtube_Videos_Herrunterladen
         private readonly Utilityclass utilityclass;
         private readonly Label downloadSpeedLb;
 
-        public VideoDownloader(Utilityclass utilityclass, MainForm mainForm, Label currentSizeLb, ProgressBar progressBar, string selectedFolderPath, string tempFolderPath, ComboBox mp4QualityComboBox, Label downloadSpeedLb)
+        public VideoDownloader(Utilityclass utilityclass, Main main, Label currentSizeLb, ProgressBar progressBar, string selectedFolderPath, string tempFolderPath, ComboBox mp4QualityComboBox, Label downloadSpeedLb)
         {
             this.currentSizeLb = currentSizeLb;
             this.progressBar = progressBar;
             this.selectedFolderPath = selectedFolderPath;
             this.tempFolderPath = tempFolderPath;
             this.mp4QualityComboBox = mp4QualityComboBox;
-            this.mainForm = mainForm;
+            this.main = main;
             this.utilityclass = utilityclass;
             this.downloadSpeedLb = downloadSpeedLb;
         }
@@ -48,24 +48,25 @@ namespace Youtube_Videos_Herrunterladen
         {
             try
             {
-                mainForm.infoForm.infoBox.Text = $"Download von Video mit ID {mainForm.streamId} wird gestartet...\r\n";
-                mainForm.infoForm.infoBox.AppendText("Stream-Informationen werden abgerufen...\r\n");
+                main.infoForm.infoBox.Text = $"Download von Video mit ID {main.streamId} wird gestartet...\r\n";
+                main.infoForm.infoBox.AppendText("Stream-Informationen werden abgerufen...\r\n");
 
-                if (mainForm.videoStreamInfo != null && mainForm.audioStreamInfo != null)  // Check if both video and audio stream info are not null
+                if (main.videoStreamInfo != null && main.audioStreamInfo != null)  // Check if both video and audio stream info are not null
                 {
-                    mainForm.infoForm.infoBox.AppendText("Stream-Informationen erfolgreich abgerufen...\r\n");
+                    main.infoForm.infoBox.AppendText("Stream-Informationen erfolgreich abgerufen...\r\n");
 
-                    long videoBytes = mainForm.videoStreamInfo.Size.Bytes;  // Get the total size of the video stream in bytes
-                    long audioBytes = mainForm.audioStreamInfo.Size.Bytes;  // Get the total size of the audio stream in bytes
+                    long videoBytes = main.videoStreamInfo.Size.Bytes;  // Get the total size of the video stream in bytes
+                    long audioBytes = main.audioStreamInfo.Size.Bytes;  // Get the total size of the audio stream in bytes
                     long totalBytes = videoBytes + audioBytes;  // Calculate the total size of video and audio streams
 
                     string videoSize = utilityclass.FormatBytes(videoBytes);  // Convert the video size to a human-readable format
                     string audioSize = utilityclass.FormatBytes(audioBytes);  // Convert the audio size to a human-readable format
                     string totalSize = utilityclass.FormatBytes(totalBytes);  // Convert the total size to a human-readable format
 
-                    string videoTitle = mainForm.stream.Title + " " + mp4QualityComboBox.Text;  // Get the video title
+                    string videoTitle = main.stream.Title + " " + mp4QualityComboBox.Text;  // Get the video title
 
-                    utilityclass.AddHistoryLabel(videoTitle + ".mp4", mainForm.stream.Id);
+                    main.downloadHistory.Add(main.stream.Id, videoTitle + ".mp4");
+                    utilityclass.AddHistoryLabel(videoTitle + ".mp4", main.stream.Id);
 
                     foreach (char c in Path.GetInvalidFileNameChars())  // Replace invalid characters in the video title with '_'
                     {
@@ -83,19 +84,19 @@ namespace Youtube_Videos_Herrunterladen
 
 
                     // Download the video stream asynchronously and update the progress for video download
-                    mainForm.infoForm.infoBox.AppendText("Video-Download gestartet...\r\n");
+                    main.infoForm.infoBox.AppendText("Video-Download gestartet...\r\n");
                     var videoProgress = new Progress<double>(p => UpdateProgress(p, totalSize, totalBytes, true));
-                    await mainForm.youtube.Videos.Streams.DownloadAsync(mainForm.videoStreamInfo, tempVideoFilePath, progress: videoProgress);
-                    mainForm.infoForm.infoBox.AppendText("Video-Download erfolgreich...\r\n");
+                    await main.youtube.Videos.Streams.DownloadAsync(main.videoStreamInfo, tempVideoFilePath, progress: videoProgress);
+                    main.infoForm.infoBox.AppendText("Video-Download erfolgreich...\r\n");
 
                     // Download the audio stream asynchronously and update the progress for audio download
-                    mainForm.infoForm.infoBox.AppendText("Audio-Download gestartet...\r\n");
+                    main.infoForm.infoBox.AppendText("Audio-Download gestartet...\r\n");
                     var audioProgress = new Progress<double>(p => UpdateProgress(p, totalSize, totalBytes, false));
-                    await mainForm.youtube.Videos.Streams.DownloadAsync(mainForm.audioStreamInfo, rawAudioFilePath, progress: audioProgress);
-                    mainForm.infoForm.infoBox.AppendText("Audio-Download erfolgreich...\r\n");
+                    await main.youtube.Videos.Streams.DownloadAsync(main.audioStreamInfo, rawAudioFilePath, progress: audioProgress);
+                    main.infoForm.infoBox.AppendText("Audio-Download erfolgreich...\r\n");
 
                     // Convert the raw audio file to a final audio file
-                    mainForm.infoForm.infoBox.AppendText("Das Format des Audiostreams wird gesucht...\r\n");
+                    main.infoForm.infoBox.AppendText("Das Format des Audiostreams wird gesucht...\r\n");
                     utilityclass.GetMp3FormatAndConvert(rawAudioFilePath, tempAudioFilePath);
 
                     var FinalVideoFilePath = Path.Combine(selectedFolderPath, $@"{videoTitle}.mp4");  // Combine the selected folder path and the video title to form the final video file path
@@ -103,9 +104,9 @@ namespace Youtube_Videos_Herrunterladen
                     if (System.IO.File.Exists(FinalVideoFilePath)) System.IO.File.Delete(FinalVideoFilePath);  // Delete the final video file if it already exists
 
                     // Merge the temporary video and audio files to form the final video file
-                    mainForm.infoForm.infoBox.AppendText("Video und Audio werden zusammengefügt...\r\n");
+                    main.infoForm.infoBox.AppendText("Video und Audio werden zusammengefügt...\r\n");
                     await MergeAsync(tempVideoFilePath, tempAudioFilePath, FinalVideoFilePath);
-                    mainForm.infoForm.infoBox.AppendText("Video und Audio erfolgreich zusammengefügt...\r\n");
+                    main.infoForm.infoBox.AppendText("Video und Audio erfolgreich zusammengefügt...\r\n");
 
 
                     // Delete the temporary files
@@ -115,18 +116,18 @@ namespace Youtube_Videos_Herrunterladen
 
                     progressBar.Value = 100;  // Set the progress bar value to 100%
                     UpdateProgress(1, totalSize, totalBytes, false);  // Update the progress to 100% after merging
-                    mainForm.infoForm.infoBox.AppendText("Download und Zusammenführung erfolgreich abgeschlossen!\r\n");
+                    main.infoForm.infoBox.AppendText("Download und Zusammenführung erfolgreich abgeschlossen!\r\n");
                 }
                 else  // If either video or audio stream info is null
                 {
                     MessageBox.Show("Das Video enthält keinen verfügbaren Audio- oder Video-Stream.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);  // Show an error message
-                    mainForm.infoForm.infoBox.AppendText("Das Video enthält keinen verfügbaren Audio- oder Video-Stream.");  // Append error message to the info box
+                    main.infoForm.infoBox.AppendText("Das Video enthält keinen verfügbaren Audio- oder Video-Stream.");  // Append error message to the info box
                 }
             }
             catch (Exception ex)  // Catch any exception
             {
                 MessageBox.Show($"Ein Fehler ist aufgetreten: {ex.Message}", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);  // Show the error message
-                mainForm.infoForm.infoBox.AppendText($"Ein Fehler ist aufgetreten: {ex.Message}");  // Append the error message to the info box
+                main.infoForm.infoBox.AppendText($"Ein Fehler ist aufgetreten: {ex.Message}");  // Append the error message to the info box
             }
         }
 
