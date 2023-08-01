@@ -62,6 +62,11 @@ namespace Youtube_Videos_Herrunterladen
 
                     utilityclass.AddHistoryLabel(audioTitle + ".mp3");
 
+                    foreach (char c in Path.GetInvalidFileNameChars())  // Replace invalid characters in the video title with '_'
+                    {
+                        audioTitle = audioTitle.Replace(c, '_');
+                    }
+
                     var rawAudioFilePath = Path.Combine(tempFolderPath, $"{audioTitle}-temp.mp3");  // Combine the selected folder path and the audio title to form the audio file path
                     var finalAudioFilePath = Path.Combine(selectedFolderPath, $"{audioTitle}.mp3");  // Combine the selected folder path and the audio title to form the audio file path
 
