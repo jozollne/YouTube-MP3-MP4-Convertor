@@ -9,12 +9,15 @@ using Youtube_Videos_Herrunterladen;
 using YoutubeExplode;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
+using System.Drawing.Imaging;
+using System.Collections.Generic;
 
 namespace Youtube_Videos_Herrunterladen
 {
     public partial class Main : Form
     {
-        readonly Utilityclass utilityclass;
+        public Dictionary<string, string> downloadHistory = new Dictionary<string, string>();
+        private readonly Utilityclass utilityclass;
         public YoutubeClient youtube = new YoutubeClient();  // Create a new YoutubeClient to interact with the YouTube service
         public static string username = Environment.UserName;  // Get the username of the current user
         public string selectedFolderPath = $@"C:\Users\{username}\Downloads\"; // Set the default download location to the current user's Downloads folder
@@ -42,6 +45,7 @@ namespace Youtube_Videos_Herrunterladen
 
             // Add evry label to the pic box so they get transparent
             thumbnailPicBox.Controls.Add(shadowLeft);
+            thumbnailPicBox.Controls.Add(historyShadow);
             shadowLeft.Controls.Add(channelLb);
             shadowLeft.Controls.Add(currentSizeLb);
             shadowLeft.Controls.Add(downloadSpeedLb);
@@ -59,6 +63,9 @@ namespace Youtube_Videos_Herrunterladen
             shadowLeft.Controls.Add(uploadDateLb);
             shadowLeft.Controls.Add(usbSticksPanel);
             shadowLeft.Controls.Add(historyPanel);
+            //historyShadow.BringToFront();
+            //historyShadow.Hide();
+
 
             // Updates the stats
             linkBox.TextChanged += LinkBox_TextChanged;  // Register the text changed event handler for the linkBox control
@@ -84,6 +91,7 @@ namespace Youtube_Videos_Herrunterladen
             linkBox.Text = "Link: (z.B. https://www.youtube.com/watch?v=6WRLynWxVKg)";
             linkBox.ForeColor = Color.Gray;
             ToggleControlsDownload(true);
+            thumbnailPicBox.Image = null;
             ToggleControlsSecurity(false);
         }
         // This method handles the click event for the DownloadMp4Bt Button
@@ -96,6 +104,7 @@ namespace Youtube_Videos_Herrunterladen
             linkBox.Text = "Link: (z.B. https://www.youtube.com/watch?v=6WRLynWxVKg)";
             linkBox.ForeColor = Color.Gray;
             ToggleControlsDownload(true);
+            thumbnailPicBox.Image = null;
             ToggleControlsSecurity(false);
         }
 

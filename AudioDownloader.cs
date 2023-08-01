@@ -60,11 +60,12 @@ namespace Youtube_Videos_Herrunterladen
                     string audioSize = utilityclass.FormatBytes(audioBytes);  // Convert the audio size to a human-readable format
                     string audioTitle = main.stream.Title;  // save video title
 
-                    utilityclass.AddHistoryLabel(audioTitle + ".mp3");
+                    //main.downloadHistory.Add();
+                    utilityclass.AddHistoryLabel(audioTitle + ".mp3", main.streamId);
 
                     foreach (char c in Path.GetInvalidFileNameChars())  // Replace invalid characters in the video title with '_'
                     {
-                        audioTitle = audioTitle.Replace(c, '_');
+                        audioTitle = audioTitle.Replace(c, ' ');
                     }
 
                     var rawAudioFilePath = Path.Combine(tempFolderPath, $"{audioTitle}-temp.mp3");  // Combine the selected folder path and the audio title to form the audio file path

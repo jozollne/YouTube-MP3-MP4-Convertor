@@ -65,7 +65,8 @@ namespace Youtube_Videos_Herrunterladen
 
                     string videoTitle = main.stream.Title + " " + mp4QualityComboBox.Text;  // Get the video title
 
-                    utilityclass.AddHistoryLabel(videoTitle + ".mp4");
+                    main.downloadHistory.Add(main.stream.Id, videoTitle + ".mp4");
+                    utilityclass.AddHistoryLabel(videoTitle + ".mp4", main.stream.Id);
 
                     foreach (char c in Path.GetInvalidFileNameChars())  // Replace invalid characters in the video title with '_'
                     {

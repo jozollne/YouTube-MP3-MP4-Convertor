@@ -61,41 +61,11 @@ namespace Youtube_Videos_Herrunterladen.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Icon ähnlich wie (Symbol).
-        /// </summary>
-        internal static System.Drawing.Icon ico_info {
-            get {
-                object obj = ResourceManager.GetObject("ico_info", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap icons8_info_50 {
+        internal static System.Drawing.Bitmap InfoIcon {
             get {
-                object obj = ResourceManager.GetObject("icons8_info_50", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Info {
-            get {
-                object obj = ResourceManager.GetObject("Info", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Info2 {
-            get {
-                object obj = ResourceManager.GetObject("Info2", resourceCulture);
+                object obj = ResourceManager.GetObject("InfoIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

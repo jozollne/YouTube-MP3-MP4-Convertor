@@ -9,7 +9,8 @@ using System.Windows.Forms;
 using YoutubeExplode.Videos.Streams;
 using MediaToolkit;
 using MediaToolkit.Model;
-
+using static System.Net.WebRequestMethods;
+using System.Drawing;
 
 namespace Youtube_Videos_Herrunterladen
 {
@@ -131,10 +132,11 @@ namespace Youtube_Videos_Herrunterladen
             return videoStreamInfo;
         }
 
-        public void AddHistoryLabel(string Title)
+        public void AddHistoryLabel(string Title, string streamId)
         {
             Label label = new Label
             {
+                Name = streamId,
                 Text = Title,  // Set the label text as "VolumeLabel (DriveName)"
                 AutoSize = true,  // Enable auto-sizing of the label based on its content
                 Margin = new Padding(3, 3, 3, 3),  // Set the margin around the label for better spacing
@@ -143,7 +145,9 @@ namespace Youtube_Videos_Herrunterladen
 
             label.Click += (s, e) => // Set up a click event handler
             {
-                MessageBox.Show("Jetz soll der link des videos in die textbox eingefügt werden");
+                linkBox.Text = "https://www.youtube.com/watch?v=" + streamId;
+                main.ActiveControl = linkBox;
+                linkBox.ForeColor = Color.Black;
             };
 
             historyPanel.Controls.Add(label);  // Add the label to the usbSticksPanel
@@ -184,6 +188,7 @@ namespace Youtube_Videos_Herrunterladen
                 main.videoStreamInfo = null;
                 downloadSpeedLb.Text = "Geschwindigkeit: Kein Download";
                 main.ToggleControlsSecurity(false);
+                thumbnailPicBox.Image = null;
             }
         }
     }

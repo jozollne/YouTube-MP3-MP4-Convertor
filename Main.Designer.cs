@@ -48,14 +48,16 @@
             this.channelLb = new System.Windows.Forms.Label();
             this.idLb = new System.Windows.Forms.Label();
             this.uploadDateLb = new System.Windows.Forms.Label();
-            this.showInfoFormBt = new System.Windows.Forms.Button();
-            this.thumbnailPicBox = new System.Windows.Forms.PictureBox();
             this.mp4QualityComboBox = new System.Windows.Forms.ComboBox();
             this.downloadSpeedLb = new System.Windows.Forms.Label();
-            this.shadowLeft = new System.Windows.Forms.PictureBox();
             this.historyPanel = new System.Windows.Forms.Panel();
-            ((System.ComponentModel.ISupportInitialize)(this.thumbnailPicBox)).BeginInit();
+            this.shadowLeft = new System.Windows.Forms.PictureBox();
+            this.showInfoFormBt = new System.Windows.Forms.Button();
+            this.thumbnailPicBox = new System.Windows.Forms.PictureBox();
+            this.historyShadow = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.shadowLeft)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.thumbnailPicBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.historyShadow)).BeginInit();
             this.SuspendLayout();
             // 
             // linkBox
@@ -293,34 +295,6 @@
             this.uploadDateLb.TabIndex = 24;
             this.uploadDateLb.Text = "Hochgeladen: Kein Link";
             // 
-            // showInfoFormBt
-            // 
-            this.showInfoFormBt.BackColor = System.Drawing.Color.Transparent;
-            this.showInfoFormBt.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.showInfoFormBt.FlatAppearance.BorderSize = 0;
-            this.showInfoFormBt.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.showInfoFormBt.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.showInfoFormBt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.showInfoFormBt.Image = global::Youtube_Videos_Herrunterladen.Properties.Resources.Info2;
-            this.showInfoFormBt.Location = new System.Drawing.Point(1068, 116);
-            this.showInfoFormBt.Name = "showInfoFormBt";
-            this.showInfoFormBt.Size = new System.Drawing.Size(34, 32);
-            this.showInfoFormBt.TabIndex = 25;
-            this.showInfoFormBt.UseVisualStyleBackColor = false;
-            this.showInfoFormBt.Click += new System.EventHandler(this.showInfoFormBt_Click);
-            // 
-            // thumbnailPicBox
-            // 
-            this.thumbnailPicBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("thumbnailPicBox.BackgroundImage")));
-            this.thumbnailPicBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.thumbnailPicBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.thumbnailPicBox.Location = new System.Drawing.Point(0, 0);
-            this.thumbnailPicBox.Name = "thumbnailPicBox";
-            this.thumbnailPicBox.Size = new System.Drawing.Size(1113, 683);
-            this.thumbnailPicBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.thumbnailPicBox.TabIndex = 18;
-            this.thumbnailPicBox.TabStop = false;
-            // 
             // mp4QualityComboBox
             // 
             this.mp4QualityComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -342,18 +316,6 @@
             this.downloadSpeedLb.TabIndex = 28;
             this.downloadSpeedLb.Text = "Geschwindigkeit: Kein Download";
             // 
-            // shadowLeft
-            // 
-            this.shadowLeft.BackColor = System.Drawing.Color.Transparent;
-            this.shadowLeft.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.shadowLeft.Image = ((System.Drawing.Image)(resources.GetObject("shadowLeft.Image")));
-            this.shadowLeft.Location = new System.Drawing.Point(0, 0);
-            this.shadowLeft.Name = "shadowLeft";
-            this.shadowLeft.Size = new System.Drawing.Size(1113, 683);
-            this.shadowLeft.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.shadowLeft.TabIndex = 29;
-            this.shadowLeft.TabStop = false;
-            // 
             // historyPanel
             // 
             this.historyPanel.BackColor = System.Drawing.Color.Transparent;
@@ -363,13 +325,68 @@
             this.historyPanel.Size = new System.Drawing.Size(564, 378);
             this.historyPanel.TabIndex = 30;
             // 
+            // shadowLeft
+            // 
+            this.shadowLeft.BackColor = System.Drawing.Color.Transparent;
+            this.shadowLeft.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.shadowLeft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.shadowLeft.Image = ((System.Drawing.Image)(resources.GetObject("shadowLeft.Image")));
+            this.shadowLeft.Location = new System.Drawing.Point(0, 0);
+            this.shadowLeft.Name = "shadowLeft";
+            this.shadowLeft.Size = new System.Drawing.Size(1113, 683);
+            this.shadowLeft.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.shadowLeft.TabIndex = 29;
+            this.shadowLeft.TabStop = false;
+            // 
+            // showInfoFormBt
+            // 
+            this.showInfoFormBt.BackColor = System.Drawing.Color.Transparent;
+            this.showInfoFormBt.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.showInfoFormBt.FlatAppearance.BorderSize = 0;
+            this.showInfoFormBt.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.showInfoFormBt.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.showInfoFormBt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.showInfoFormBt.Image = global::Youtube_Videos_Herrunterladen.Properties.Resources.InfoIcon;
+            this.showInfoFormBt.Location = new System.Drawing.Point(1068, 116);
+            this.showInfoFormBt.Name = "showInfoFormBt";
+            this.showInfoFormBt.Size = new System.Drawing.Size(34, 32);
+            this.showInfoFormBt.TabIndex = 25;
+            this.showInfoFormBt.UseVisualStyleBackColor = false;
+            this.showInfoFormBt.Click += new System.EventHandler(this.showInfoFormBt_Click);
+            // 
+            // thumbnailPicBox
+            // 
+            this.thumbnailPicBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("thumbnailPicBox.BackgroundImage")));
+            this.thumbnailPicBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.thumbnailPicBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.thumbnailPicBox.Location = new System.Drawing.Point(0, 0);
+            this.thumbnailPicBox.Name = "thumbnailPicBox";
+            this.thumbnailPicBox.Size = new System.Drawing.Size(1113, 683);
+            this.thumbnailPicBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.thumbnailPicBox.TabIndex = 18;
+            this.thumbnailPicBox.TabStop = false;
+            // 
+            // historyShadow
+            // 
+            this.historyShadow.BackColor = System.Drawing.Color.Transparent;
+            this.historyShadow.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.historyShadow.Image = ((System.Drawing.Image)(resources.GetObject("historyShadow.Image")));
+            this.historyShadow.Location = new System.Drawing.Point(438, 0);
+            this.historyShadow.Name = "historyShadow";
+            this.historyShadow.Size = new System.Drawing.Size(675, 683);
+            this.historyShadow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.historyShadow.TabIndex = 31;
+            this.historyShadow.TabStop = false;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 26F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.Window;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(1113, 683);
+            this.Controls.Add(this.historyShadow);
             this.Controls.Add(this.historyPanel);
             this.Controls.Add(this.historyLb);
             this.Controls.Add(this.infoLb);
@@ -393,15 +410,17 @@
             this.Controls.Add(this.subLb1);
             this.Controls.Add(this.downloadMp4Bt);
             this.Controls.Add(this.linkBox);
-            this.Controls.Add(this.shadowLeft);
             this.Controls.Add(this.thumbnailPicBox);
+            this.Controls.Add(this.shadowLeft);
+            this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Main";
             this.Text = "Youtube Videos Herrunterladen";
-            ((System.ComponentModel.ISupportInitialize)(this.thumbnailPicBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.shadowLeft)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.thumbnailPicBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.historyShadow)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -434,6 +453,7 @@
         private System.Windows.Forms.Label downloadSpeedLb;
         private System.Windows.Forms.PictureBox shadowLeft;
         private System.Windows.Forms.Panel historyPanel;
+        private System.Windows.Forms.PictureBox historyShadow;
     }
 }
 
