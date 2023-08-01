@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using YoutubeExplode.Videos.Streams;
+using MediaToolkit;
+using MediaToolkit.Model;
+
 
 namespace Youtube_Videos_Herrunterladen
 {
@@ -23,9 +26,11 @@ namespace Youtube_Videos_Herrunterladen
         private readonly Label titleLb;
         private readonly Label durationLb;
         private readonly Label channelLb;
+        private readonly Label downloadSpeedLb;
+        private readonly Panel historyPanel;
 
 
-        public Utilityclass(Main main, ComboBox mp4QualityComboBox, TextBox linkBox, Label idLb, Label uploadDateLb, Label mp4SizeLb, Label mp3SizeLb, PictureBox thumbnailPicBox, Label titleLb, Label durationLb, Label channelLb) 
+        public Utilityclass(Main main, ComboBox mp4QualityComboBox, TextBox linkBox, Label idLb, Label uploadDateLb, Label mp4SizeLb, Label mp3SizeLb, PictureBox thumbnailPicBox, Label titleLb, Label durationLb, Label channelLb, Label downloadSpeedLb, Panel historyPanel) 
         {
             this.mp4QualityComboBox = mp4QualityComboBox;
             this.linkBox = linkBox;
@@ -38,6 +43,8 @@ namespace Youtube_Videos_Herrunterladen
             this.durationLb = durationLb;
             this.channelLb = channelLb;
             this.main = main;
+            this.downloadSpeedLb = downloadSpeedLb;
+            this.historyPanel = historyPanel;
         }
         public void GetMp3FormatAndConvert(string tempAudioFilePath, string finalAudioFilePath)
         {
@@ -70,36 +77,14 @@ namespace Youtube_Videos_Herrunterladen
                 {
                     main.infoForm.infoBox.AppendText("Das Format des Audiostrems wird von: " + format + " in: .mp3 umgewandelt" + Environment.NewLine);  // Ausgabe der Umwandlungsinformation in das Info-Fenster
 
-                    // Starten von ffmpeg.exe als Prozess mit den entsprechenden Argumenten zur Umwandlung in MP3
-                    var process = new Process
+                    var inputFile = new MediaFile { Filename = tempAudioFilePath};
+                    var outputFile = new MediaFile { Filename = finalAudioFilePath };
+
+                    using (var engine = new Engine())
                     {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            // Dateiname der ausführbaren Datei, die für die Audiokonvertierung verwendet wird (ffmpeg.exe)
-                            FileName = "ffmpeg.exe",
-
-                            // Argumente für den ffmpeg.exe-Befehl:
-                            // -i "{tempAudioFilePath}": Eingabedatei, die überprüft und konvertiert werden soll (temporäre Audiodatei)
-                            // -vn: "Video Null", schließt das Video vom Eingabestream aus (nur Audio wird bearbeitet)
-                            // -ar 44100: Abtastrate für die Audioausgabe auf 44100 Hz (typische Abtastrate für Audiodateien)
-                            // -ac 2: Anzahl der Audiokanäle auf 2 festlegen (stereo)
-                            // -b:a 192k: Bitrate für die Audioausgabe auf 192 kbit/s setzen (bessere Audioqualität, aber größere Dateigröße)
-                            // "{finalAudioFilePath}": Ausgabedatei, in die die konvertierte Audiodatei geschrieben wird (Pfad durch "finalAudioFilePath" angegeben)
-                            Arguments = $"-i \"{tempAudioFilePath}\" -vn -ar 44100 -ac 2 -b:a 192k \"{finalAudioFilePath}\"",
-
-                            // Verhindert die Verwendung der Shell zum Ausführen des Prozesses (Sicherheitsmaßnahme)
-                            UseShellExecute = false,
-
-                            // Leitet die Ausgabe des Prozesses (falls vorhanden) in den Standardausgabestream des Prozesses um
-                            RedirectStandardOutput = true,
-
-                            // Legt fest, dass kein neues Fenster erstellt werden soll, wenn der Prozess gestartet wird (läuft im Hintergrund)
-                            CreateNoWindow = true
-
-                        }
-                    };
-                    process.Start();
-                    process.WaitForExit();
+                        engine.GetMetadata(inputFile);
+                        engine.Convert(inputFile, outputFile);
+                    }
 
                     main.infoForm.infoBox.AppendText("Das Format wurde von: " + format + " in: .mp3 umgewandelt" + Environment.NewLine);  // Ausgabe der Erfolgsmeldung in das Info-Fenster
                 }
@@ -146,6 +131,29 @@ namespace Youtube_Videos_Herrunterladen
             return videoStreamInfo;
         }
 
+        public void AddHistoryLabel(string Title)
+        {
+            Label label = new Label
+            {
+                Text = Title,  // Set the label text as "VolumeLabel (DriveName)"
+                AutoSize = true,  // Enable auto-sizing of the label based on its content
+                Margin = new Padding(3, 3, 3, 3),  // Set the margin around the label for better spacing
+                Top = historyPanel.Controls.OfType<Label>().Count() * 25  // Set the vertical position of the label based on the number of existing labels
+            };
+
+            label.Click += (s, e) => // Set up a click event handler
+            {
+                MessageBox.Show("Jetz soll der link des videos in die textbox eingefügt werden");
+            };
+
+            historyPanel.Controls.Add(label);  // Add the label to the usbSticksPanel
+
+            foreach (char c in Path.GetInvalidFileNameChars()) // Read an save evry char in "c"
+            {
+                Title = Title.Replace(c, '_'); // Replace evry invalid symbol like "\" with an "_"
+            }
+        }
+
         public async Task GetStreamInfos()
         {
             try
@@ -156,6 +164,7 @@ namespace Youtube_Videos_Herrunterladen
                 main.streamManifest = await main.youtube.Videos.Streams.GetManifestAsync(main.streamId);
                 main.audioStreamInfo = main.streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
                 main.videoStreamInfo = GetMp4VideoSize(main.streamManifest);
+                main.ToggleControlsSecurity(true);
             }
             catch
             {
@@ -167,13 +176,8 @@ namespace Youtube_Videos_Herrunterladen
                 durationLb.Text = "Dauer: 00:00:00";
                 mp4SizeLb.Text = ".mp4 Größe: 0 MB";
                 mp3SizeLb.Text = ".mp3 Größe: 0 MB";
-                thumbnailPicBox.Image = null;
-                main.uri = null;
-                main.streamId = null;
-                main.stream = null;
-                main.streamManifest = null;
-                main.audioStreamInfo = null;
-                main.videoStreamInfo = null;
+                downloadSpeedLb.Text = "Geschwindigkeit: Kein Download";
+                main.ToggleControlsSecurity(false);
             }
         }
     }

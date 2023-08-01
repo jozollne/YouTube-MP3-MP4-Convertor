@@ -73,9 +73,29 @@ namespace Youtube_Videos_Herrunterladen.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap png_info {
+        internal static System.Drawing.Bitmap icons8_info_50 {
             get {
-                object obj = ResourceManager.GetObject("png_info", resourceCulture);
+                object obj = ResourceManager.GetObject("icons8_info_50", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Info {
+            get {
+                object obj = ResourceManager.GetObject("Info", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Info2 {
+            get {
+                object obj = ResourceManager.GetObject("Info2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

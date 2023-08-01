@@ -39,6 +39,9 @@
     <Reference Include="ATL">
       <HintPath>..\..\Konsole\AddThumbnailTo.mp3\atldotnet-main\ATL\bin\Debug\net48\ATL.dll</HintPath>
     </Reference>
+    <Reference Include="MediaToolkit, Version=1.1.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MediaToolkit.1.1.0.1\lib\net40\MediaToolkit.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -152,6 +155,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\png_info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-info-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Info.png" />
+    <None Include="Resources\Info2.png" />
+    <None Include="Resources\Info1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
