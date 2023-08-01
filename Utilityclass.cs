@@ -176,6 +176,12 @@ namespace Youtube_Videos_Herrunterladen
                 durationLb.Text = "Dauer: 00:00:00";
                 mp4SizeLb.Text = ".mp4 Größe: 0 MB";
                 mp3SizeLb.Text = ".mp3 Größe: 0 MB";
+                main.uri = null;
+                main.streamId = null;
+                main.stream = null;
+                main.streamManifest = null;
+                main.audioStreamInfo = null;
+                main.videoStreamInfo = null;
                 downloadSpeedLb.Text = "Geschwindigkeit: Kein Download";
                 main.ToggleControlsSecurity(false);
             }

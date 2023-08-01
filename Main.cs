@@ -81,8 +81,10 @@ namespace Youtube_Videos_Herrunterladen
             ToggleControlsDownload(false);
             AudioDownloader audioDownloader = new AudioDownloader(utilityclass, this, selectedFolderPath, currentSizeLb, progressBar, tempFolderPath, downloadSpeedLb);  // Instantiate AudioDownloader to download audio from YouTube
             await audioDownloader.DownloadAudioAsync();  // Asynchronously download the audio file
-            linkBox.Text = "";
+            linkBox.Text = "Link: (z.B. https://www.youtube.com/watch?v=6WRLynWxVKg)";
+            linkBox.ForeColor = Color.Gray;
             ToggleControlsDownload(true);
+            ToggleControlsSecurity(false);
         }
         // This method handles the click event for the DownloadMp4Bt Button
         // It starts the process of downloading video from YouTube in an asynchronous manner
@@ -91,8 +93,10 @@ namespace Youtube_Videos_Herrunterladen
             ToggleControlsDownload(false);
             VideoDownloader VideoDownloader = new VideoDownloader(utilityclass, this, currentSizeLb, progressBar, selectedFolderPath, tempFolderPath, mp4QualityComboBox, downloadSpeedLb);  // Instantiate VideoDownloader to download video from YouTube
             await VideoDownloader.DownloadVideoAsync();  // Asynchronously download the video file
-            linkBox.Text = "";
+            linkBox.Text = "Link: (z.B. https://www.youtube.com/watch?v=6WRLynWxVKg)";
+            linkBox.ForeColor = Color.Gray;
             ToggleControlsDownload(true);
+            ToggleControlsSecurity(false);
         }
 
         private async void LinkBox_TextChanged(object sender, EventArgs e)

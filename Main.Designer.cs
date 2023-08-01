@@ -66,7 +66,7 @@
             this.linkBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.linkBox.Name = "linkBox";
             this.linkBox.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.linkBox.Size = new System.Drawing.Size(845, 32);
+            this.linkBox.Size = new System.Drawing.Size(1082, 32);
             this.linkBox.TabIndex = 0;
             this.linkBox.Text = "Link: (z.B. https://www.youtube.com/watch?v=6WRLynWxVKg)";
             this.linkBox.Enter += new System.EventHandler(this.LinkBox_Enter);
@@ -78,7 +78,7 @@
             this.downloadMp4Bt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.downloadMp4Bt.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.downloadMp4Bt.ForeColor = System.Drawing.Color.White;
-            this.downloadMp4Bt.Location = new System.Drawing.Point(630, 642);
+            this.downloadMp4Bt.Location = new System.Drawing.Point(891, 642);
             this.downloadMp4Bt.Name = "downloadMp4Bt";
             this.downloadMp4Bt.Size = new System.Drawing.Size(211, 33);
             this.downloadMp4Bt.TabIndex = 3;
@@ -105,7 +105,7 @@
             this.progressBar.BackColor = System.Drawing.Color.White;
             this.progressBar.Location = new System.Drawing.Point(20, 93);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(845, 23);
+            this.progressBar.Size = new System.Drawing.Size(1081, 23);
             this.progressBar.TabIndex = 5;
             // 
             // infoLb
@@ -212,7 +212,7 @@
             this.downloadMp3Bt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.downloadMp3Bt.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.downloadMp3Bt.ForeColor = System.Drawing.Color.White;
-            this.downloadMp3Bt.Location = new System.Drawing.Point(419, 642);
+            this.downloadMp3Bt.Location = new System.Drawing.Point(680, 642);
             this.downloadMp3Bt.Name = "downloadMp3Bt";
             this.downloadMp3Bt.Size = new System.Drawing.Size(205, 33);
             this.downloadMp3Bt.TabIndex = 2;
@@ -251,7 +251,7 @@
             this.historyLb.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.historyLb.Font = new System.Drawing.Font("Calibri", 24F, System.Drawing.FontStyle.Bold);
             this.historyLb.ForeColor = System.Drawing.Color.White;
-            this.historyLb.Location = new System.Drawing.Point(1067, 51);
+            this.historyLb.Location = new System.Drawing.Point(764, 178);
             this.historyLb.Name = "historyLb";
             this.historyLb.Size = new System.Drawing.Size(121, 39);
             this.historyLb.TabIndex = 20;
@@ -302,7 +302,7 @@
             this.showInfoFormBt.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.showInfoFormBt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.showInfoFormBt.Image = global::Youtube_Videos_Herrunterladen.Properties.Resources.Info2;
-            this.showInfoFormBt.Location = new System.Drawing.Point(831, 116);
+            this.showInfoFormBt.Location = new System.Drawing.Point(1068, 116);
             this.showInfoFormBt.Name = "showInfoFormBt";
             this.showInfoFormBt.Size = new System.Drawing.Size(34, 32);
             this.showInfoFormBt.TabIndex = 25;
@@ -316,7 +316,7 @@
             this.thumbnailPicBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.thumbnailPicBox.Location = new System.Drawing.Point(0, 0);
             this.thumbnailPicBox.Name = "thumbnailPicBox";
-            this.thumbnailPicBox.Size = new System.Drawing.Size(1344, 683);
+            this.thumbnailPicBox.Size = new System.Drawing.Size(1113, 683);
             this.thumbnailPicBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.thumbnailPicBox.TabIndex = 18;
             this.thumbnailPicBox.TabStop = false;
@@ -349,7 +349,7 @@
             this.shadowLeft.Image = ((System.Drawing.Image)(resources.GetObject("shadowLeft.Image")));
             this.shadowLeft.Location = new System.Drawing.Point(0, 0);
             this.shadowLeft.Name = "shadowLeft";
-            this.shadowLeft.Size = new System.Drawing.Size(1344, 683);
+            this.shadowLeft.Size = new System.Drawing.Size(1113, 683);
             this.shadowLeft.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.shadowLeft.TabIndex = 29;
             this.shadowLeft.TabStop = false;
@@ -358,9 +358,9 @@
             // 
             this.historyPanel.BackColor = System.Drawing.Color.Transparent;
             this.historyPanel.ForeColor = System.Drawing.Color.White;
-            this.historyPanel.Location = new System.Drawing.Point(920, 108);
+            this.historyPanel.Location = new System.Drawing.Point(538, 220);
             this.historyPanel.Name = "historyPanel";
-            this.historyPanel.Size = new System.Drawing.Size(417, 567);
+            this.historyPanel.Size = new System.Drawing.Size(564, 378);
             this.historyPanel.TabIndex = 30;
             // 
             // Main
@@ -369,7 +369,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(1344, 683);
+            this.ClientSize = new System.Drawing.Size(1113, 683);
             this.Controls.Add(this.historyPanel);
             this.Controls.Add(this.historyLb);
             this.Controls.Add(this.infoLb);
