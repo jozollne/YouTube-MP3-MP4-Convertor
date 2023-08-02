@@ -18,6 +18,7 @@ namespace Youtube_Videos_Herrunterladen
 {
     public partial class MainForm : Form
     {
+        private UsbManager usbManager;
         private readonly Utilityclass utilityclass;
         public YoutubeClient youtube = new YoutubeClient();  // Create a new YoutubeClient to interact with the YouTube service
         public static string username = Environment.UserName;  // Get the username of the current user
@@ -32,15 +33,16 @@ namespace Youtube_Videos_Herrunterladen
         public IStreamInfo audioStreamInfo;
         public IStreamInfo videoStreamInfo;
         public Image image;
-        readonly System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer() // Create a timer to trigger events at regular intervals
-        {
-            Interval = 500 // Set the interval of the timer to 500ms (0.5 seconds)
-        };
-
         public MainForm()
         {
             InitializeComponent();  
+
+            // Looks for USB Sticks evry second 
+            usbManager = new UsbManager(this, subLb2, mainShadow, locationLb);
+            // Event Handler for form closing
+            this.FormClosing += new FormClosingEventHandler(MainForm_FormClosing);
             // Create an instance of the Utulityclass
+
             utilityclass = new Utilityclass(this, mp4QualityComboBox, linkBox, idLb, uploadDateLb, mp4SizeLb, mp3SizeLb, titleLb, durationLb, channelLb, downloadSpeedLb);
 
             // Create an instance of the HistoryForm
@@ -65,12 +67,10 @@ namespace Youtube_Videos_Herrunterladen
             mainShadow.Controls.Add(mp4QualityLb);
             mainShadow.Controls.Add(mp4SizeLb);
             mainShadow.Controls.Add(showInfoFormBt);
-            mainShadow.Controls.Add(subLb1);
+            mainShadow.Controls.Add(locationLb);
             mainShadow.Controls.Add(subLb2);
             mainShadow.Controls.Add(titleLb);
             mainShadow.Controls.Add(uploadDateLb);
-            mainShadow.Controls.Add(usbSticksPanel);
-            
             // Updates the stats
             linkBox.TextChanged += LinkBox_TextChanged;  // Register the text changed event handler for the linkBox control
             mp4QualityComboBox.TextChanged += ComboBox_TextChanged;
@@ -78,11 +78,7 @@ namespace Youtube_Videos_Herrunterladen
             // Create an instance of the Utulityclass
             utilityclass = new Utilityclass(this, mp4QualityComboBox, linkBox, idLb, uploadDateLb, mp4SizeLb, mp3SizeLb, titleLb, durationLb, channelLb, downloadSpeedLb);
 
-            // Looks for USB Sticks evry second 
-            UsbManager usbManager = new UsbManager(this, usbSticksPanel, subLb1);  // Instantiate UsbManager to manage USB devices
-            timer.Tick += new EventHandler(usbManager.UpdateUsbLabels);  // Register the Tick event to update the USB labels
-            timer.Start();  // Start the timer
-            subLb1.Text = "Speicherort: " + selectedFolderPath;  // Set the initial text of subLb1 to the selected folder path
+            locationLb.Text = "Speicherort: " + selectedFolderPath;  // Set the initial text of subLb1 to the selected folder path
         }
 
         // This method handles the click event for the DownloadMp3Bt Button
@@ -94,7 +90,6 @@ namespace Youtube_Videos_Herrunterladen
             await audioDownloader.DownloadAudioAsync();  // Asynchronously download the audio file
             linkBox.Text = "Link: (z.B. https://www.youtube.com/watch?v=6WRLynWxVKg)";
             linkBox.ForeColor = Color.Gray;
-            BackgroundImage = Resources.defaultBackground;
             ToggleControlsDownload(true);
             ToggleControlsSecurity(false);
         }
@@ -107,7 +102,6 @@ namespace Youtube_Videos_Herrunterladen
             await VideoDownloader.DownloadVideoAsync();  // Asynchronously download the video file
             linkBox.Text = "Link: (z.B. https://www.youtube.com/watch?v=6WRLynWxVKg)";
             linkBox.ForeColor = Color.Gray;
-            BackgroundImage = Resources.defaultBackground;
             ToggleControlsDownload(true);
             ToggleControlsSecurity(false);
         }
@@ -135,13 +129,12 @@ namespace Youtube_Videos_Herrunterladen
             downloadMp4Bt.Enabled = isEnabled;  // Toggle the Enabled status of the Download Mp4 Button
             downloadMp3Bt.Enabled = isEnabled;  // Toggle the Enabled status of the Download Mp3 Button
             selectFolderBt.Enabled = isEnabled;  // Toggle the Enabled status of the Select Folder Button
-            timer.Enabled = isEnabled;  // Toggle the Enabled status of the Timer
             mp4QualityComboBox.Enabled = isEnabled;
 
-            foreach (Label label in usbSticksPanel.Controls.OfType<Label>())  // Toggle the Enabled status of the Labels in the usbSticksPanel
-            {
-                label.Enabled = isEnabled;  // Toggle the Enabled status of each Label
-            }
+            //foreach (Label label in usbSticksPanel.Controls.OfType<Label>())  // Toggle the Enabled status of the Labels in the usbSticksPanel
+            //{
+            //    label.Enabled = isEnabled;  // Toggle the Enabled status of each Label
+            //}
         }
 
         public void ToggleControlsSecurity(bool isEnabled)
@@ -163,7 +156,7 @@ namespace Youtube_Videos_Herrunterladen
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
                     selectedFolderPath = fbd.SelectedPath;  // Update the selectedFolderPath to the selected path
-                    subLb1.Text = "Speicherort: " + selectedFolderPath;  // Update the subLb1 text to the selected folder path
+                    locationLb.Text = "Speicherort: " + selectedFolderPath;  // Update the subLb1 text to the selected folder path
                 }
             }
         }
@@ -222,10 +215,14 @@ namespace Youtube_Videos_Herrunterladen
                 historyForm.Width = this.Width;
             }
         }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            usbManager.Stop();
+        }
     }
 }
 //Wenn die audio convertiert wird, hällt das ganze programm wegen prozess.waitforexit an. Das ändern :)
-//Timer für die USB Sticks ausbauen und richtige lösung suchen
 //Ganze Playlists aufeinmal downloaden
 //Update Progress in die Utilyty klasse einfügen
 //Statsupdater in Utilityclass einfügen

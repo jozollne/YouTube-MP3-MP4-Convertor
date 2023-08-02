@@ -1,60 +1,120 @@
-﻿using System;  // Import the System namespace
+﻿using System;
+using System.IO;
+using System.Management;
+using System.Windows.Forms;
+using System.Collections.Generic;
 using System.Drawing;
-using System.IO;  // Import the System.IO namespace for handling files and directories
-using System.Linq;  // Import the System.Linq namespace for working with collections
-using System.Windows.Forms;  // Import the System.Windows.Forms namespace for working with Windows Forms
-using Forms = System.Windows.Forms;  // Alias the System.Windows.Forms namespace to 'Forms' for better readability
+using Youtube_Videos_Herrunterladen;
 
-namespace Youtube_Videos_Herrunterladen
+public class UsbManager
 {
-    internal class UsbManager
+    private ManagementEventWatcher insertWatcher;
+    private ManagementEventWatcher removeWatcher;
+    private List<Label> usbLabels = new List<Label>(); // List to store all USB labels
+    private MainForm mainForm; // Form to operate on
+    private Label subLb2; // Sub label to reference
+    private PictureBox mainShadow;
+    private Label locationLb;
+
+    public UsbManager(MainForm mainForm, Label subLb2, PictureBox mainShadow, Label locationLb)
     {
-        private readonly MainForm mainForm;
-        private readonly Panel usbSticksPanel;  // Field to store the Panel control used for displaying USB stick labels
-        private readonly Label subLb1;  // Field to hold the Label control for displaying the selected folder path
+        this.mainForm = mainForm;
+        this.subLb2 = subLb2;
+        this.mainShadow = mainShadow;
+        this.locationLb = locationLb;
 
-        public UsbManager(MainForm mainForm, Panel usbSticksPanel, Label subLb1)
+        // Check existing USB drives
+        foreach (DriveInfo drive in DriveInfo.GetDrives())
         {
-            this.usbSticksPanel = usbSticksPanel;  // Assign the passed-in Panel to the usbSticksPanel field
-            this.subLb1 = subLb1;  // Assign the passed-in Label to the subLb1 field
-            this.mainForm = mainForm;
-        }
-
-        public void UpdateUsbLabels(object sender, EventArgs e)
-        {
-            var drives = DriveInfo.GetDrives().Where(d => d.DriveType == DriveType.Removable && d.IsReady); // Get all removable and ready drives
-
-            foreach (Control control in usbSticksPanel.Controls.OfType<Forms.Label>().ToList()) // Iterate over all existing labels
+            if (drive.DriveType == DriveType.Removable)
             {
-                usbSticksPanel.Controls.Remove(control);  // Remove the control from the usbSticksPanel
-                control.Dispose();  // Dispose the control to free any resources it's holding
-            }
-
-            foreach (var drive in drives) // Iterate over each removable drive
-            {
-                AddUsbLabel(drive.Name);  // Call the AddUsbLabel method to add a label for the current drive
+                CreateLabelForDrive(drive.Name.Trim('\\'));
             }
         }
 
-        void AddUsbLabel(string driveName)
+        // USB Insertion event watcher
+        insertWatcher = new ManagementEventWatcher();
+        WqlEventQuery insertQuery = new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent WHERE EventType = 2");
+        insertWatcher.EventArrived += new EventArrivedEventHandler(USBInserted);
+        insertWatcher.Query = insertQuery;
+        insertWatcher.Start();
+
+        // USB Removal event watcher
+        removeWatcher = new ManagementEventWatcher();
+        WqlEventQuery removeQuery = new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent WHERE EventType = 3");
+        removeWatcher.EventArrived += new EventArrivedEventHandler(USBRemoved);
+        removeWatcher.Query = removeQuery;
+        removeWatcher.Start();
+    }
+
+    private void USBInserted(object sender, EventArrivedEventArgs e)
+    {
+        string driveName = e.NewEvent.Properties["DriveName"].Value.ToString();
+        mainForm.Invoke(new Action(() => {
+            CreateLabelForDrive(driveName);
+        }));
+    }
+
+    private void USBRemoved(object sender, EventArrivedEventArgs e)
+    {
+        string driveName = e.NewEvent.Properties["DriveName"].Value.ToString();
+        mainForm.Invoke(new Action(() => {
+            // Remove the label
+            for (int i = 0; i < usbLabels.Count; i++)
+            {
+                if (usbLabels[i].Text == $"{driveName}")
+                {
+                    mainShadow.Controls.Remove(usbLabels[i]);
+                    usbLabels.RemoveAt(i);
+                    break;
+                }
+            }
+
+            // Reposition the remaining labels
+            for (int i = 0; i < usbLabels.Count; i++)
+            {
+                usbLabels[i].Top = i > 0 ? usbLabels[i - 1].Top + 30 : subLb2.Top + subLb2.Height;
+            }
+        }));
+    }
+
+    private void CreateLabelForDrive(string driveName)
+    {
+        // Add a label
+        Label usbLabel = new Label();
+        usbLabel.ForeColor = Color.White;
+        usbLabel.Text = $"{driveName}";
+        usbLabel.Name = $"usbLabel{driveName}";
+        usbLabel.Top = usbLabels.Count > 0 ? usbLabels[usbLabels.Count - 1].Top + 30 : subLb2.Top + subLb2.Height; // Position is below the last label or subLb1 if it's the first
+        usbLabel.Left = subLb2.Left;
+        usbLabel.AutoSize = true;  // Enable auto-sizing of the label based on its content
+        usbLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+
+        usbLabel.Click += (s, e) => // Set up a click event handler
         {
-            var driveLabel = new DriveInfo(driveName).VolumeLabel; // Get the volume label of the drive
+            mainForm.selectedFolderPath = driveName + "\\";  // Update the selectedFolderPath field with the current drive name
+            locationLb.Text = "Speicherort: " + $"({driveName})";  // Update the subLb1 label to display the selected folder path
+        };
 
-            Forms.Label label = new Forms.Label
-            {
-                Text = $"{driveLabel} ({driveName})",  // Set the label text as "VolumeLabel (DriveName)"
-                AutoSize = true,  // Enable auto-sizing of the label based on its content
-                Margin = new Padding(3, 3, 3, 3),  // Set the margin around the label for better spacing
-                Top = usbSticksPanel.Controls.OfType<Forms.Label>().Count() * 25  // Set the vertical position of the label based on the number of existing labels
-            };
+        mainShadow.Controls.Add(usbLabel);
 
-            label.Click += (s, e) => // Set up a click event handler
-            {
-                mainForm.selectedFolderPath = driveName;  // Update the selectedFolderPath field with the current drive name
-                subLb1.Text = "Speicherort: " + $"{driveLabel} ({driveName})";  // Update the subLb1 label to display the selected folder path
-            };
+        usbLabels.Add(usbLabel); // Add the label to the list
+    }
 
-            usbSticksPanel.Controls.Add(label);  // Add the label to the usbSticksPanel
+    public void Stop()
+    {
+        if (insertWatcher != null)
+        {
+            insertWatcher.Stop();
+            insertWatcher.Dispose();
+            insertWatcher = null;
+        }
+
+        if (removeWatcher != null)
+        {
+            removeWatcher.Stop();
+            removeWatcher.Dispose();
+            removeWatcher = null;
         }
     }
 }
