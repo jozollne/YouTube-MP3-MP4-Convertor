@@ -9,12 +9,15 @@ using Youtube_Videos_Herrunterladen;
 using YoutubeExplode;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
+using System.Drawing.Imaging;
+using System.Collections.Generic;
 
 namespace Youtube_Videos_Herrunterladen
 {
     public partial class Main : Form
     {
-        readonly Utilityclass utilityclass;
+        public Dictionary<string, string> downloadHistory = new Dictionary<string, string>();
+        private readonly Utilityclass utilityclass;
         public YoutubeClient youtube = new YoutubeClient();  // Create a new YoutubeClient to interact with the YouTube service
         public static string username = Environment.UserName;  // Get the username of the current user
         public string selectedFolderPath = $@"C:\Users\{username}\Downloads\"; // Set the default download location to the current user's Downloads folder
@@ -26,6 +29,7 @@ namespace Youtube_Videos_Herrunterladen
         public StreamManifest streamManifest;
         public IStreamInfo audioStreamInfo;
         public IStreamInfo videoStreamInfo;
+        public Image image;
         readonly System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer() // Create a timer to trigger events at regular intervals
         {
             Interval = 500 // Set the interval of the timer to 500ms (0.5 seconds)
@@ -35,22 +39,42 @@ namespace Youtube_Videos_Herrunterladen
         {
             InitializeComponent();  // Initialize the components of the Form
 
-            utilityclass = new Utilityclass(this, mp4QualityComboBox, linkBox, idLb, uploadDateLb, mp4SizeLb, mp3SizeLb, thumbnailPicBox, titleLb, durationLb, channelLb);
+            // Fokus auf das Hauptformular setzen, um zu verhindern, dass sich der Fokus automatisch auf die linkBox TextBox legt
+            this.ActiveControl = selectFolderBt;
+            ToggleControlsSecurity(false);
 
-            historyBox.ScrollBars = ScrollBars.Both;
+            // Add evry label to the pic box so they get transparent
+            thumbnailPicBox.Controls.Add(shadowLeft);
+            thumbnailPicBox.Controls.Add(historyShadow);
+            shadowLeft.Controls.Add(channelLb);
+            shadowLeft.Controls.Add(currentSizeLb);
+            shadowLeft.Controls.Add(downloadSpeedLb);
+            shadowLeft.Controls.Add(durationLb);
+            shadowLeft.Controls.Add(idLb);
+            shadowLeft.Controls.Add(infoLb);
+            shadowLeft.Controls.Add(historyLb);
+            shadowLeft.Controls.Add(mp3SizeLb);
+            shadowLeft.Controls.Add(mp4QualityLb);
+            shadowLeft.Controls.Add(mp4SizeLb);
+            shadowLeft.Controls.Add(showInfoFormBt);
+            shadowLeft.Controls.Add(subLb1);
+            shadowLeft.Controls.Add(subLb2);
+            shadowLeft.Controls.Add(titleLb);
+            shadowLeft.Controls.Add(uploadDateLb);
+            shadowLeft.Controls.Add(usbSticksPanel);
+            shadowLeft.Controls.Add(historyPanel);
+            //historyShadow.BringToFront();
+            //historyShadow.Hide();
 
-            // Configure showInfoFormBt Button to be transparent
-            showInfoFormBt.FlatAppearance.BorderSize = 0;
-            showInfoFormBt.BackColor = Color.Transparent;
-            showInfoFormBt.FlatAppearance.BorderSize = 0;
-            showInfoFormBt.FlatAppearance.MouseDownBackColor = Color.Transparent;
-            showInfoFormBt.FlatAppearance.MouseOverBackColor = Color.Transparent;
-            showInfoFormBt.FlatStyle = FlatStyle.Flat;
-            showInfoFormBt.UseVisualStyleBackColor = false;  // Ensure the Button is always transparent
 
+            // Updates the stats
             linkBox.TextChanged += LinkBox_TextChanged;  // Register the text changed event handler for the linkBox control
             mp4QualityComboBox.TextChanged += ComboBox_TextChanged;
 
+            // Create an instance of the Utulityclass
+            utilityclass = new Utilityclass(this, mp4QualityComboBox, linkBox, idLb, uploadDateLb, mp4SizeLb, mp3SizeLb, thumbnailPicBox, titleLb, durationLb, channelLb, downloadSpeedLb, historyPanel);
+
+            // Looks for USB Sticks evry second 
             UsbManager usbManager = new UsbManager(this, usbSticksPanel, subLb1);  // Instantiate UsbManager to manage USB devices
             timer.Tick += new EventHandler(usbManager.UpdateUsbLabels);  // Register the Tick event to update the USB labels
             timer.Start();  // Start the timer
@@ -61,32 +85,36 @@ namespace Youtube_Videos_Herrunterladen
         // It starts the process of downloading audio from YouTube in an asynchronous manner
         private async void DownloadMp3Bt_Click(object sender, EventArgs e)
         {
-            ToggleControls(false);
-            AudioDownloader audioDownloader = new AudioDownloader(utilityclass, this, selectedFolderPath, currentSizeLb, progressBar, historyBox, tempFolderPath);  // Instantiate AudioDownloader to download audio from YouTube
+            ToggleControlsDownload(false);
+            AudioDownloader audioDownloader = new AudioDownloader(utilityclass, this, selectedFolderPath, currentSizeLb, progressBar, tempFolderPath, downloadSpeedLb);  // Instantiate AudioDownloader to download audio from YouTube
             await audioDownloader.DownloadAudioAsync();  // Asynchronously download the audio file
-            linkBox.Text = "";
-            ToggleControls(true);
+            linkBox.Text = "Link: (z.B. https://www.youtube.com/watch?v=6WRLynWxVKg)";
+            linkBox.ForeColor = Color.Gray;
+            ToggleControlsDownload(true);
+            thumbnailPicBox.Image = null;
+            ToggleControlsSecurity(false);
         }
         // This method handles the click event for the DownloadMp4Bt Button
         // It starts the process of downloading video from YouTube in an asynchronous manner
         private async void DownloadMp4Bt_Click(object sender, EventArgs e)
         {
-            ToggleControls(false);
-            VideoDownloader VideoDownloader = new VideoDownloader(utilityclass, this, currentSizeLb, progressBar, selectedFolderPath, tempFolderPath, historyBox, mp4QualityComboBox);  // Instantiate VideoDownloader to download video from YouTube
+            ToggleControlsDownload(false);
+            VideoDownloader VideoDownloader = new VideoDownloader(utilityclass, this, currentSizeLb, progressBar, selectedFolderPath, tempFolderPath, mp4QualityComboBox, downloadSpeedLb);  // Instantiate VideoDownloader to download video from YouTube
             await VideoDownloader.DownloadVideoAsync();  // Asynchronously download the video file
-            linkBox.Text = "";
-            ToggleControls(true);
+            linkBox.Text = "Link: (z.B. https://www.youtube.com/watch?v=6WRLynWxVKg)";
+            linkBox.ForeColor = Color.Gray;
+            ToggleControlsDownload(true);
+            thumbnailPicBox.Image = null;
+            ToggleControlsSecurity(false);
         }
 
         private async void LinkBox_TextChanged(object sender, EventArgs e)
         {
             // When a new link i enterd, diably controls becuase youtube explode needs to load all the informarion
-            ToggleControls(false);
             await utilityclass.GetStreamInfos();
             mp4QualityComboBox.Items.Clear();
             StatsUpdater statsUpdater = new StatsUpdater(utilityclass, this, titleLb, durationLb, mp4SizeLb, mp3SizeLb, thumbnailPicBox, channelLb, idLb, uploadDateLb, mp4QualityComboBox);
             await statsUpdater.UpdateVideoStatsAsync();  // Asynchronously update the video stats
-            ToggleControls(true);
 
         }
         private async void ComboBox_TextChanged(object sender, EventArgs e)
@@ -97,12 +125,12 @@ namespace Youtube_Videos_Herrunterladen
         }
 
         // This method toggles the Enabled status of various controls on the form
-        public void ToggleControls(bool isEnabled)
+        public void ToggleControlsDownload(bool isEnabled)
         {
             linkBox.ReadOnly = !isEnabled;  // Toggle the ReadOnly status of the TextBox
             downloadMp4Bt.Enabled = isEnabled;  // Toggle the Enabled status of the Download Mp4 Button
             downloadMp3Bt.Enabled = isEnabled;  // Toggle the Enabled status of the Download Mp3 Button
-            selectFolderButton.Enabled = isEnabled;  // Toggle the Enabled status of the Select Folder Button
+            selectFolderBt.Enabled = isEnabled;  // Toggle the Enabled status of the Select Folder Button
             timer.Enabled = isEnabled;  // Toggle the Enabled status of the Timer
             mp4QualityComboBox.Enabled = isEnabled;
 
@@ -110,6 +138,13 @@ namespace Youtube_Videos_Herrunterladen
             {
                 label.Enabled = isEnabled;  // Toggle the Enabled status of each Label
             }
+        }
+
+        public void ToggleControlsSecurity(bool isEnabled)
+        {
+            downloadMp4Bt.Enabled = isEnabled;  // Toggle the Enabled status of the Download Mp4 Button
+            downloadMp3Bt.Enabled = isEnabled;  // Toggle the Enabled status of the Download Mp3 Button
+            mp4QualityComboBox.Enabled = isEnabled;
         }
 
         // This method handles the click event for the selectFolderButton
@@ -129,9 +164,26 @@ namespace Youtube_Videos_Herrunterladen
             }
         }
 
-        // This method handles the click event for the showInfoFormBt Button
-        // It shows the infoForm as a separate window
-        private void ShowInfoFormBt_Click(object sender, EventArgs e)
+        public void LinkBox_Enter(object sender, EventArgs e)
+        {
+            // Wenn die TextBox den Fokus erhält, und der Text noch das Wasserzeichen ist, leeren wir den Text und setzen die Schriftfarbe auf Schwarz.
+            if (linkBox.Text == "Link: (z.B. https://www.youtube.com/watch?v=6WRLynWxVKg)")
+            {
+                linkBox.Text = "";
+                linkBox.ForeColor = Color.Black;
+            }
+        }
+
+        public void LinkBox_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(linkBox.Text))
+            {
+                linkBox.Text = "Link: (z.B. https://www.youtube.com/watch?v=6WRLynWxVKg)";
+                linkBox.ForeColor = Color.Gray;
+            }
+        }
+
+        private void showInfoFormBt_Click(object sender, EventArgs e)
         {
             infoForm.Show();
         }
@@ -143,3 +195,4 @@ namespace Youtube_Videos_Herrunterladen
 //Klasse für alle Methoden erstellen?
 //Timer für die USB Sticks ausbauen und richtige lösung suchen
 //Ganze Playlists aufeinmal downloaden
+//Update Progress in die Utilyty klasse einfügen

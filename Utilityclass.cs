@@ -7,25 +7,29 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using YoutubeExplode.Videos.Streams;
+using MediaToolkit;
+using MediaToolkit.Model;
+using static System.Net.WebRequestMethods;
+using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace Youtube_Videos_Herrunterladen
 {
     internal class Utilityclass
     {
-        private readonly Main main;
+        private readonly MainForm mainForm;
         private readonly ComboBox mp4QualityComboBox;
         private readonly TextBox linkBox;
         private readonly Label idLb;
         private readonly Label uploadDateLb;
         private readonly Label mp4SizeLb;
         private readonly Label mp3SizeLb;
-        private readonly PictureBox thumbnailPicBox;
         private readonly Label titleLb;
         private readonly Label durationLb;
         private readonly Label channelLb;
+        private readonly Label downloadSpeedLb;
 
-
-        public Utilityclass(Main main, ComboBox mp4QualityComboBox, TextBox linkBox, Label idLb, Label uploadDateLb, Label mp4SizeLb, Label mp3SizeLb, PictureBox thumbnailPicBox, Label titleLb, Label durationLb, Label channelLb) 
+        public Utilityclass(MainForm mainForm, ComboBox mp4QualityComboBox, TextBox linkBox, Label idLb, Label uploadDateLb, Label mp4SizeLb, Label mp3SizeLb, Label titleLb, Label durationLb, Label channelLb, Label downloadSpeedLb) 
         {
             this.mp4QualityComboBox = mp4QualityComboBox;
             this.linkBox = linkBox;
@@ -33,11 +37,11 @@ namespace Youtube_Videos_Herrunterladen
             this.uploadDateLb = uploadDateLb;
             this.mp4SizeLb = mp4SizeLb;
             this.mp3SizeLb = mp3SizeLb;
-            this.thumbnailPicBox = thumbnailPicBox;
             this.titleLb = titleLb;
             this.durationLb = durationLb;
             this.channelLb = channelLb;
-            this.main = main;
+            this.mainForm = mainForm;
+            this.downloadSpeedLb = downloadSpeedLb;
         }
         public void GetMp3FormatAndConvert(string tempAudioFilePath, string finalAudioFilePath)
         {
@@ -64,44 +68,22 @@ namespace Youtube_Videos_Herrunterladen
                 else
                     format = "Dateiformat konnte nicht erkannt werden"; // Unbekanntes Format
 
-                main.infoForm.infoBox.AppendText("Das Format des Audiostrerams ist: " + format + Environment.NewLine);  // Ausgabe des erkannten Formats in ein Info-Fenster
+                mainForm.infoForm.infoBox.AppendText("Das Format des Audiostrerams ist: " + format + Environment.NewLine);  // Ausgabe des erkannten Formats in ein Info-Fenster
 
                 if (format != ".mp3")  // Wenn das Format nicht MP3 ist, wird es in MP3 umgewandelt
                 {
-                    main.infoForm.infoBox.AppendText("Das Format des Audiostrems wird von: " + format + " in: .mp3 umgewandelt" + Environment.NewLine);  // Ausgabe der Umwandlungsinformation in das Info-Fenster
+                    mainForm.infoForm.infoBox.AppendText("Das Format des Audiostrems wird von: " + format + " in: .mp3 umgewandelt" + Environment.NewLine);  // Ausgabe der Umwandlungsinformation in das Info-Fenster
 
-                    // Starten von ffmpeg.exe als Prozess mit den entsprechenden Argumenten zur Umwandlung in MP3
-                    var process = new Process
+                    var inputFile = new MediaFile { Filename = tempAudioFilePath};
+                    var outputFile = new MediaFile { Filename = finalAudioFilePath };
+
+                    using (var engine = new Engine())
                     {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            // Dateiname der ausführbaren Datei, die für die Audiokonvertierung verwendet wird (ffmpeg.exe)
-                            FileName = "ffmpeg.exe",
+                        engine.GetMetadata(inputFile);
+                        engine.Convert(inputFile, outputFile);
+                    }
 
-                            // Argumente für den ffmpeg.exe-Befehl:
-                            // -i "{tempAudioFilePath}": Eingabedatei, die überprüft und konvertiert werden soll (temporäre Audiodatei)
-                            // -vn: "Video Null", schließt das Video vom Eingabestream aus (nur Audio wird bearbeitet)
-                            // -ar 44100: Abtastrate für die Audioausgabe auf 44100 Hz (typische Abtastrate für Audiodateien)
-                            // -ac 2: Anzahl der Audiokanäle auf 2 festlegen (stereo)
-                            // -b:a 192k: Bitrate für die Audioausgabe auf 192 kbit/s setzen (bessere Audioqualität, aber größere Dateigröße)
-                            // "{finalAudioFilePath}": Ausgabedatei, in die die konvertierte Audiodatei geschrieben wird (Pfad durch "finalAudioFilePath" angegeben)
-                            Arguments = $"-i \"{tempAudioFilePath}\" -vn -ar 44100 -ac 2 -b:a 192k \"{finalAudioFilePath}\"",
-
-                            // Verhindert die Verwendung der Shell zum Ausführen des Prozesses (Sicherheitsmaßnahme)
-                            UseShellExecute = false,
-
-                            // Leitet die Ausgabe des Prozesses (falls vorhanden) in den Standardausgabestream des Prozesses um
-                            RedirectStandardOutput = true,
-
-                            // Legt fest, dass kein neues Fenster erstellt werden soll, wenn der Prozess gestartet wird (läuft im Hintergrund)
-                            CreateNoWindow = true
-
-                        }
-                    };
-                    process.Start();
-                    process.WaitForExit();
-
-                    main.infoForm.infoBox.AppendText("Das Format wurde von: " + format + " in: .mp3 umgewandelt" + Environment.NewLine);  // Ausgabe der Erfolgsmeldung in das Info-Fenster
+                    mainForm.infoForm.infoBox.AppendText("Das Format wurde von: " + format + " in: .mp3 umgewandelt" + Environment.NewLine);  // Ausgabe der Erfolgsmeldung in das Info-Fenster
                 }
             }
         }
@@ -146,16 +128,80 @@ namespace Youtube_Videos_Herrunterladen
             return videoStreamInfo;
         }
 
+        public void AddHistoryLabel(string Title, string streamId)
+        {
+            var labels = mainForm.historyForm.Controls.OfType<Label>().ToList();
+            int topPosition;
+
+            if (labels.Count > 0)
+            {
+                var lastLabel = labels[labels.Count - 1]; // get the last label
+                topPosition = lastLabel.Top + lastLabel.Height + 3; // calculate the new top position
+            }
+            else
+            {
+                topPosition = mainForm.historyForm.label1.Bottom + 3; // if it's the first label, position it under label1
+            }
+
+            Label label = new Label
+            {
+                Name = streamId,
+                Text = Title,
+                AutoSize = true,
+                Margin = new Padding(3, 3, 3, 3),
+                Top = topPosition,
+                Left = mainForm.historyForm.label1.Left, // align the label with label1
+                BackColor = Color.Transparent,
+                ForeColor = Color.White
+            };
+
+            label.Click += (s, e) =>
+            {
+                linkBox.Text = "https://www.youtube.com/watch?v=" + streamId;
+                mainForm.ActiveControl = linkBox;
+                linkBox.ForeColor = Color.Black;
+            };
+
+            mainForm.historyForm.Controls.Add(label);
+
+            mainForm.historyForm.Height = label.Bottom + 50; // adjust the form height based on the last label
+
+            foreach (char c in Path.GetInvalidFileNameChars())
+            {
+                Title = Title.Replace(c, '_');
+            }
+        }
+
+        // Deklarationen für die SetWindowPos Funktion
+        [DllImport("user32.dll")]
+        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+        public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+        public static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
+        public const uint SWP_NOSIZE = 0x0001;
+        public const uint SWP_NOMOVE = 0x0002;
+        public const uint SWP_NOACTIVATE = 0x0010;
+
+        public void BringToFrontWithoutFocus(Form formToBringToFront, Form formToCheck)
+        {
+            if (formToCheck.Visible) // Wenn das zu überprüfende Formular sichtbar ist
+            {
+                // Bringt das zuerst genannte Formular nach vorne, ohne den Fokus zu ändern
+                SetWindowPos(formToBringToFront.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+                SetWindowPos(formToBringToFront.Handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            }
+        }
+
         public async Task GetStreamInfos()
         {
             try
             {
-                main.uri = new Uri(linkBox.Text);
-                main.streamId = main.uri.Query.TrimStart('?').Split('&')[0].Substring(2);
-                main.stream = await main.youtube.Videos.GetAsync(main.streamId);
-                main.streamManifest = await main.youtube.Videos.Streams.GetManifestAsync(main.streamId);
-                main.audioStreamInfo = main.streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
-                main.videoStreamInfo = GetMp4VideoSize(main.streamManifest);
+                mainForm.uri = new Uri(linkBox.Text);
+                mainForm.streamId = mainForm.uri.Query.TrimStart('?').Split('&')[0].Substring(2);
+                mainForm.stream = await mainForm.youtube.Videos.GetAsync(mainForm.streamId);
+                mainForm.streamManifest = await mainForm.youtube.Videos.Streams.GetManifestAsync(mainForm.streamId);
+                mainForm.audioStreamInfo = mainForm.streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
+                mainForm.videoStreamInfo = GetMp4VideoSize(mainForm.streamManifest);
+                mainForm.ToggleControlsSecurity(true);
             }
             catch
             {
@@ -167,13 +213,14 @@ namespace Youtube_Videos_Herrunterladen
                 durationLb.Text = "Dauer: 00:00:00";
                 mp4SizeLb.Text = ".mp4 Größe: 0 MB";
                 mp3SizeLb.Text = ".mp3 Größe: 0 MB";
-                thumbnailPicBox.Image = null;
-                main.uri = null;
-                main.streamId = null;
-                main.stream = null;
-                main.streamManifest = null;
-                main.audioStreamInfo = null;
-                main.videoStreamInfo = null;
+                mainForm.uri = null;
+                mainForm.streamId = null;
+                mainForm.stream = null;
+                mainForm.streamManifest = null;
+                mainForm.audioStreamInfo = null;
+                mainForm.videoStreamInfo = null;
+                downloadSpeedLb.Text = "Geschwindigkeit: Kein Download";
+                mainForm.ToggleControlsSecurity(false);
             }
         }
     }

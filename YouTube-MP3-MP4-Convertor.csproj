@@ -36,6 +36,12 @@
     <Reference Include="AngleSharp, Version=1.0.2.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
       <HintPath>packages\AngleSharp.1.0.3\lib\net472\AngleSharp.dll</HintPath>
     </Reference>
+    <Reference Include="ATL">
+      <HintPath>..\..\Konsole\AddThumbnailTo.mp3\atldotnet-main\ATL\bin\Debug\net48\ATL.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaToolkit, Version=1.1.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MediaToolkit.1.1.0.1\lib\net40\MediaToolkit.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -94,17 +100,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HistoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HistoryForm.Designer.cs">
+      <DependentUpon>HistoryForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="InfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="InfoForm.Designer.cs">
       <DependentUpon>InfoForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main.cs">
+    <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Main.Designer.cs">
-      <DependentUpon>Main.cs</DependentUpon>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="AudioDownloader.cs" />
     <Compile Include="Program.cs" />
@@ -119,11 +131,14 @@
     <Compile Include="VideoDownloader.cs" />
     <Compile Include="StatsUpdater.cs" />
     <Compile Include="VideoAndAudioSizeUpdater.cs" />
+    <EmbeddedResource Include="HistoryForm.resx">
+      <DependentUpon>HistoryForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="InfoForm.resx">
       <DependentUpon>InfoForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main.resx">
-      <DependentUpon>Main.cs</DependentUpon>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -145,10 +160,22 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ico_info.ico" />
+    <None Include="Resources\infoIcon.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\png_info.png" />
+    <None Include="Resources\historyIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\defaultBackground.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mainShadow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Pictures\historyShadow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Pictures\mainIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

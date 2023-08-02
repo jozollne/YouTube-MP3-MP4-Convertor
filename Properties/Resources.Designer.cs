@@ -61,11 +61,51 @@ namespace Youtube_Videos_Herrunterladen.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap defaultBackground {
+            get {
+                object obj = ResourceManager.GetObject("defaultBackground", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap historyIcon {
+            get {
+                object obj = ResourceManager.GetObject("historyIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap historyShadow {
+            get {
+                object obj = ResourceManager.GetObject("historyShadow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap infoIcon {
+            get {
+                object obj = ResourceManager.GetObject("infoIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Icon ähnlich wie (Symbol).
         /// </summary>
-        internal static System.Drawing.Icon ico_info {
+        internal static System.Drawing.Icon mainIcon {
             get {
-                object obj = ResourceManager.GetObject("ico_info", resourceCulture);
+                object obj = ResourceManager.GetObject("mainIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -73,9 +113,9 @@ namespace Youtube_Videos_Herrunterladen.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap png_info {
+        internal static System.Drawing.Bitmap mainShadow {
             get {
-                object obj = ResourceManager.GetObject("png_info", resourceCulture);
+                object obj = ResourceManager.GetObject("mainShadow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

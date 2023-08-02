@@ -1,4 +1,5 @@
 ﻿using System;  // Import the System namespace
+using System.Drawing;
 using System.IO;  // Import the System.IO namespace for handling files and directories
 using System.Linq;  // Import the System.Linq namespace for working with collections
 using System.Windows.Forms;  // Import the System.Windows.Forms namespace for working with Windows Forms
@@ -8,15 +9,15 @@ namespace Youtube_Videos_Herrunterladen
 {
     internal class UsbManager
     {
-        private readonly Main main;
+        private readonly MainForm mainForm;
         private readonly Panel usbSticksPanel;  // Field to store the Panel control used for displaying USB stick labels
         private readonly Label subLb1;  // Field to hold the Label control for displaying the selected folder path
 
-        public UsbManager(Main main, Panel usbSticksPanel, Label subLb1)
+        public UsbManager(MainForm mainForm, Panel usbSticksPanel, Label subLb1)
         {
             this.usbSticksPanel = usbSticksPanel;  // Assign the passed-in Panel to the usbSticksPanel field
             this.subLb1 = subLb1;  // Assign the passed-in Label to the subLb1 field
-            this.main = main;
+            this.mainForm = mainForm;
         }
 
         public void UpdateUsbLabels(object sender, EventArgs e)
@@ -49,7 +50,7 @@ namespace Youtube_Videos_Herrunterladen
 
             label.Click += (s, e) => // Set up a click event handler
             {
-                main.selectedFolderPath = driveName;  // Update the selectedFolderPath field with the current drive name
+                mainForm.selectedFolderPath = driveName;  // Update the selectedFolderPath field with the current drive name
                 subLb1.Text = "Speicherort: " + $"{driveLabel} ({driveName})";  // Update the subLb1 label to display the selected folder path
             };
 
