@@ -16,7 +16,7 @@ namespace Youtube_Videos_Herrunterladen
     internal class StatsUpdater
     {
         private readonly Utilityclass utilityclass;
-        private readonly MainForm main;
+        private readonly MainForm mainForm;
         private readonly Label titleLb;
         private readonly Label durationLb;
         private readonly Label mp4SizeLb;
@@ -26,7 +26,7 @@ namespace Youtube_Videos_Herrunterladen
         private readonly Label uploadDateLb;
         private readonly ComboBox mp4QualityComboBox;
 
-        public StatsUpdater(Utilityclass utilityclass, MainForm main, Label titleLb, Label durationLb, Label mp4SizeLb, Label mp3SizeLb, Label channelLb, Label idLb, Label uploadDateLb, ComboBox mp4QualityComboBox)
+        public StatsUpdater(Utilityclass utilityclass, MainForm mainForm, Label titleLb, Label durationLb, Label mp4SizeLb, Label mp3SizeLb, Label channelLb, Label idLb, Label uploadDateLb, ComboBox mp4QualityComboBox)
         {
             this.titleLb = titleLb;
             this.durationLb = durationLb;
@@ -36,7 +36,7 @@ namespace Youtube_Videos_Herrunterladen
             this.idLb = idLb;
             this.uploadDateLb = uploadDateLb;
             this.mp4QualityComboBox = mp4QualityComboBox;
-            this.main = main;
+            this.mainForm = mainForm;
             this.utilityclass = utilityclass;
         }
 
@@ -47,21 +47,26 @@ namespace Youtube_Videos_Herrunterladen
 
             try
             {
-                VideoAndAudioSizeUpdater videoAndAudioSizeUpdater = new VideoAndAudioSizeUpdater(utilityclass, main, mp4QualityComboBox, mp4SizeLb, mp3SizeLb);
+                VideoAndAudioSizeUpdater videoAndAudioSizeUpdater = new VideoAndAudioSizeUpdater(utilityclass, mainForm, mp4QualityComboBox, mp4SizeLb, mp3SizeLb);
                 videoAndAudioSizeUpdater.UpdateVideoAndAudioSize();
 
                 // Updating the corresponding Labels in the main window with the video information
-                titleLb.Text = "Titel: \"" + main.stream.Title + "\"";
-                idLb.Text = "ID: " + main.stream.Id;
-                channelLb.Text = $"Kanal: {main.stream.Author}";
-                DateTimeOffset uploadDateOffset = main.stream.UploadDate;
+                titleLb.Text = "Titel: \"" + mainForm.stream.Title + "\"";
+                idLb.Text = "ID: " + mainForm.stream.Id;
+                channelLb.Text = $"Kanal: {mainForm.stream.Author}";
+                DateTimeOffset uploadDateOffset = mainForm.stream.UploadDate;
                 DateTime uploadDate = uploadDateOffset.DateTime;
                 string uploadDateString = uploadDate.ToShortDateString();
                 uploadDateLb.Text = $"Hochgeladen: {uploadDateString}";
-                durationLb.Text = $"Dauer: {main.stream.Duration}";
+                durationLb.Text = $"Dauer: {mainForm.stream.Duration}";
                 try
                 {
-                    var thumbnails = main.stream.Thumbnails.OrderByDescending(t => t.Resolution.Width * t.Resolution.Height);
+                    var thumbnails = mainForm.stream.Thumbnails.OrderByDescending(t => t.Resolution.Width * t.Resolution.Height);
+
+                    // Get the thumbnail
+                    // Mindestgröße definieren
+                    int minWidth = 1241;
+                    int minHeight = 722;
 
                     // Get the thumbnail
                     foreach (var thumbnail in thumbnails)
@@ -75,10 +80,21 @@ namespace Youtube_Videos_Herrunterladen
                                 using (var mem = new MemoryStream(data))
                                 {
                                     var tempImage = Image.FromStream(mem);
+                                    // Skalieren des Bildes unter Beibehaltung des Seitenverhältnisses
+                                    var ratioX = (double)minWidth / tempImage.Width;
+                                    var ratioY = (double)minHeight / tempImage.Height;
+                                    var ratio = Math.Max(ratioX, ratioY);
+
+                                    var newWidth = (int)(tempImage.Width * ratio);
+                                    var newHeight = (int)(tempImage.Height * ratio);
+
+                                    var newImage = new Bitmap(tempImage, new Size(newWidth, newHeight));
                                     // Create a new image from the tempImage
-                                    main.image = new Bitmap(tempImage);
+                                    mainForm.image = newImage;
                                     // Display image in PictureBox
-                                    main.BackgroundImage = main.image;
+                                    mainForm.BackgroundImage = mainForm.image;
+                                    mainForm.Width = mainForm.image.Width;
+                                    mainForm.Height = mainForm.image.Height + 30;
                                 }
 
                                 // If we got here, it means we've successfully downloaded and processed a thumbnail
@@ -88,6 +104,7 @@ namespace Youtube_Videos_Herrunterladen
                         }
                         catch { }
                     }
+
                 }
                 catch (Exception ex)
                 {

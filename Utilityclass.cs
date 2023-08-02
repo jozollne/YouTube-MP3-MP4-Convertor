@@ -12,6 +12,7 @@ using MediaToolkit.Model;
 using static System.Net.WebRequestMethods;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using Youtube_Videos_Herrunterladen.Properties;
 
 namespace Youtube_Videos_Herrunterladen
 {
@@ -221,6 +222,9 @@ namespace Youtube_Videos_Herrunterladen
                 mainForm.videoStreamInfo = null;
                 downloadSpeedLb.Text = "Geschwindigkeit: Kein Download";
                 mainForm.ToggleControlsSecurity(false);
+                mainForm.Width = 1241;
+                mainForm.Height = 722;
+                mainForm.BackgroundImage = Resources.defaultBackground;
             }
         }
     }
