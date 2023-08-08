@@ -197,8 +197,18 @@ namespace Youtube_Videos_Herrunterladen
             try
             {
                 mainForm.uri = new Uri(linkBox.Text);
+                if (linkBox.Text.Contains("playlist"))
+                {
+                    string streamId = mainForm.uri.Query.TrimStart('?').Split('&')[0].Substring(5);
+                    mainForm.playlistStream = await mainForm.youtube.Playlists.GetVideosAsync(streamId);
+                    foreach (var video in mainForm.playlistStream)
+                    {
+                        // Do something with each video here.
+                    }
+                }
+
                 mainForm.streamId = mainForm.uri.Query.TrimStart('?').Split('&')[0].Substring(2);
-                mainForm.stream = await mainForm.youtube.Videos.GetAsync(mainForm.streamId);
+                mainForm.watchStream = await mainForm.youtube.Videos.GetAsync(mainForm.streamId);
                 mainForm.streamManifest = await mainForm.youtube.Videos.Streams.GetManifestAsync(mainForm.streamId);
                 mainForm.audioStreamInfo = mainForm.streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
                 mainForm.videoStreamInfo = GetMp4VideoSize(mainForm.streamManifest);
@@ -216,7 +226,7 @@ namespace Youtube_Videos_Herrunterladen
                 mp3SizeLb.Text = ".mp3 Größe: 0 MB";
                 mainForm.uri = null;
                 mainForm.streamId = null;
-                mainForm.stream = null;
+                mainForm.watchStream = null;
                 mainForm.streamManifest = null;
                 mainForm.audioStreamInfo = null;
                 mainForm.videoStreamInfo = null;

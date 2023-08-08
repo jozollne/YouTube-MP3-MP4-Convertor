@@ -63,9 +63,9 @@ namespace Youtube_Videos_Herrunterladen
                     string audioSize = utilityclass.FormatBytes(audioBytes);  // Convert the audio size to a human-readable format
                     string totalSize = utilityclass.FormatBytes(totalBytes);  // Convert the total size to a human-readable format
 
-                    string videoTitle = mainForm.stream.Title + " " + mp4QualityComboBox.Text;  // Get the video title
+                    string videoTitle = mainForm.watchStream.Title + " " + mp4QualityComboBox.Text;  // Get the video title
 
-                    utilityclass.AddHistoryLabel(videoTitle + ".mp4", mainForm.stream.Id);
+                    utilityclass.AddHistoryLabel(videoTitle + ".mp4", mainForm.watchStream.Id);
 
                     foreach (char c in Path.GetInvalidFileNameChars())  // Replace invalid characters in the video title with '_'
                     {

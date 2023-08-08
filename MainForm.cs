@@ -13,6 +13,7 @@ using System.Drawing.Imaging;
 using System.Collections.Generic;
 using Youtube_Videos_Herrunterladen.Properties;
 using System.Runtime.InteropServices;
+using YoutubeExplode.Playlists;
 
 namespace Youtube_Videos_Herrunterladen
 {
@@ -28,7 +29,8 @@ namespace Youtube_Videos_Herrunterladen
         public HistoryForm historyForm;
         public Uri uri;
         public string streamId;
-        public Video stream;
+        public Video watchStream;
+        public IReadOnlyList<PlaylistVideo> playlistStream;
         public StreamManifest streamManifest;
         public IStreamInfo audioStreamInfo;
         public IStreamInfo videoStreamInfo;

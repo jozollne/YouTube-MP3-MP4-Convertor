@@ -58,9 +58,8 @@ namespace Youtube_Videos_Herrunterladen
 
                     long audioBytes = mainForm.audioStreamInfo.Size.Bytes;  // Get the total size of the audio stream in bytes
                     string audioSize = utilityclass.FormatBytes(audioBytes);  // Convert the audio size to a human-readable format
-                    string audioTitle = mainForm.stream.Title;  // save video title
+                    string audioTitle = mainForm.watchStream.Title;  // save video title
 
-                    //main.downloadHistory.Add();
                     utilityclass.AddHistoryLabel(audioTitle + ".mp3", mainForm.streamId);
 
                     foreach (char c in Path.GetInvalidFileNameChars())  // Replace invalid characters in the video title with '_'
@@ -84,7 +83,7 @@ namespace Youtube_Videos_Herrunterladen
 
                     // Set the metadata for the audio file
                     mainForm.infoForm.infoBox.AppendText("Metadaten werden gesetzt" + Environment.NewLine);
-                    SetMetaData(finalAudioFilePath, mainForm.stream);
+                    SetMetaData(finalAudioFilePath, mainForm.watchStream);
                     mainForm.infoForm.infoBox.AppendText("Metadaten gesetzt" + Environment.NewLine);
 
                     System.IO.File.Delete(rawAudioFilePath);

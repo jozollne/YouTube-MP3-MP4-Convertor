@@ -51,17 +51,17 @@ namespace Youtube_Videos_Herrunterladen
                 videoAndAudioSizeUpdater.UpdateVideoAndAudioSize();
 
                 // Updating the corresponding Labels in the main window with the video information
-                titleLb.Text = "Titel: \"" + mainForm.stream.Title + "\"";
-                idLb.Text = "ID: " + mainForm.stream.Id;
-                channelLb.Text = $"Kanal: {mainForm.stream.Author}";
-                DateTimeOffset uploadDateOffset = mainForm.stream.UploadDate;
+                titleLb.Text = "Titel: \"" + mainForm.watchStream.Title + "\"";
+                idLb.Text = "ID: " + mainForm.watchStream.Id;
+                channelLb.Text = $"Kanal: {mainForm.watchStream.Author}";
+                DateTimeOffset uploadDateOffset = mainForm.watchStream.UploadDate;
                 DateTime uploadDate = uploadDateOffset.DateTime;
                 string uploadDateString = uploadDate.ToShortDateString();
                 uploadDateLb.Text = $"Hochgeladen: {uploadDateString}";
-                durationLb.Text = $"Dauer: {mainForm.stream.Duration}";
+                durationLb.Text = $"Dauer: {mainForm.watchStream.Duration}";
                 try
                 {
-                    var thumbnails = mainForm.stream.Thumbnails.OrderByDescending(t => t.Resolution.Width * t.Resolution.Height);
+                    var thumbnails = mainForm.watchStream.Thumbnails.OrderByDescending(t => t.Resolution.Width * t.Resolution.Height);
 
                     // Get the thumbnail
                     // Mindestgröße definieren
